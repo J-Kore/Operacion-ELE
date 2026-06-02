@@ -1,0 +1,547 @@
+{
+  "macroNiveles": [
+    {
+      "id": "A1",
+      "nombre": "Operación: El Recluta",
+      "requisitos": "Ninguno (Nivel Inicial)",
+      "objetivo": "Capacidad de supervivencia y comunicación básica en presente.",
+      "subniveles": ["A1.1", "A1.2", "A1.3", "A1.4"]
+    },
+    {
+      "id": "A2",
+      "nombre": "Operación: Agente de Campo",
+      "requisitos": "Completar A1.4",
+      "objetivo": "Narrar acciones pasadas, planes futuros y dar órdenes.",
+      "subniveles": ["A2.1", "A2.2", "A2.3", "A2.4", "A2.5"]
+    },
+    {
+      "id": "B1",
+      "nombre": "Operación: Infiltrado",
+      "requisitos": "Completar A2.5",
+      "objetivo": "Expresar deseos, sentimientos, hipótesis y manejar el sistema de pasados.",
+      "subniveles": ["B1.1", "B1.2", "B1.3", "B1.4", "B1.5", "B1.6", "B1.7", "B1.8"]
+    },
+    {
+      "id": "B2",
+      "nombre": "Operación: Doble Agente",
+      "requisitos": "Completar B1.8",
+      "objetivo": "Argumentación técnica, persuasión, hipótesis complejas y dominio de registros formales/informales.",
+      "subniveles": ["B2.1", "B2.2", "B2.3", "B2.4", "B2.5", "B2.6", "B2.7", "B2.8"]
+    }
+  ],
+  "subniveles": [
+    {
+      "id": "A1.1",
+      "macro": "A1",
+      "nombre": "Contacto e Identidad",
+      "descripcionNarrativa": "El usuario llega a la Agencia; registro de credenciales y alias.",
+      "metaComunicativa": "Identificarse, deletrear códigos y dar datos personales básicos.",
+      "morfosintaxis": "El alfabeto y fonemas conflictivos (C/QU, G/GU, J/G); Presente Indicativo (Identidad); Pronombres sujeto; Interrogativos; Verbo irregular Tener; Verbo irregular Ser; Concordancia de género y número.",
+      "verbos": ["Ser", "Llamarse", "Tener", "Vivir", "Hablar"],
+      "vocabulario": ["alias", "clave", "agente", "nacionalidad", "código", "alfabeto", "numerales cardinales 0-100"],
+      "erroresCriticos": [
+        "Confundir Ser/Tener en edad",
+        "Omitir el pronombre reflexivo (me) en llamarse",
+        "Error en concordancia de nacionalidad",
+        "Error en raíz de Tener (yo teno)",
+        "Error en pronombres interrogativos sin tilde"
+      ],
+      "gramaticaProhibida": "Todo tipo de Pasados y Futuros.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de registro. La edad se tiene (Tener) y el nombre es reflexivo (Llamarse). 2. [Diagnóstico]: Fallo de concordancia. Nacionalidad y profesión coinciden con el sujeto. 3. [Diagnóstico]: Error de interrogación. Qué, Cómo, Quién llevan tilde en preguntas.",
+      "desafios": {
+        "oral": {
+          "tipo": "Expresión Oral",
+          "nombre": "Canal de Voz",
+          "descripcion": "Transmite tus datos al operador: nombre, alias, nacionalidad y número de agente.",
+          "prompt": "Eres un oficial de registro de una agencia de espionaje. El agente acaba de llegar. Salúdale y pídele que se identifique. Evalúa nivel A1. Solo usa vocabulario de identidad básica."
+        },
+        "escrita": {
+          "tipo": "Expresión Escrita",
+          "nombre": "Terminal de Mensajería",
+          "descripcion": "Redacta un mensaje cifrado presentándote ante la Agencia en al menos 3 frases.",
+          "prompt": "Eres un evaluador de la Agencia. El agente debe enviarte un mensaje de presentación de mínimo 3 frases en español A1. Evalúa: uso correcto de ser/llamarse/tener, concordancia de género, vocabulario de identidad."
+        },
+        "lectora": {
+          "tipo": "Comprensión Lectora",
+          "nombre": "Diario Encontrado",
+          "descripcion": "Lee el expediente clasificado e identifica los datos del agente encubierto.",
+          "prompt": "Genera un breve diario de un agente encubierto en español A1 (máx 80 palabras) con datos de identidad. Luego haz 3 preguntas de comprensión. Vocabulario: ser, llamarse, tener, vivir, nacionalidades."
+        },
+        "auditiva": {
+          "tipo": "Comprensión Auditiva",
+          "nombre": "Audio Log",
+          "descripcion": "Intercepta la transmisión con [estática] y descifra la información de identidad.",
+          "prompt": "Genera la transcripción de una intercepción de radio en español A1 donde un agente da sus datos de identidad. Incluye [ESTÁTICA] en 3 momentos clave. El estudiante debe inferir la información que falta."
+        }
+      }
+    },
+    {
+      "id": "A1.2",
+      "macro": "A1",
+      "nombre": "Entorno del Cuartel",
+      "descripcionNarrativa": "Exploración táctica de las instalaciones y control de inventario.",
+      "metaComunicativa": "Localizar objetos y personas en un espacio tridimensional. Numerales ordinales.",
+      "morfosintaxis": "Contraste Hay/Está; Preposiciones de lugar; Demostrativos (este, ese, aquel); Numerales ordinales (1º-5º); Contracciones (al/del); Cuantificadores indefinidos.",
+      "verbos": ["Estar", "Haber", "Poner", "Situar", "Seguir", "Girar", "Encontrar"],
+      "vocabulario": ["oficina", "caja fuerte", "pasillo", "a la derecha", "a la izquierda", "mapa", "armario", "terminal", "primer/primero/primera", "segundo/segunda"],
+      "erroresCriticos": [
+        "Usar Estar para existencia genérica (Está un guardia)",
+        "Usar Ser para localizar (La caja es en la mesa)",
+        "Confundir Izquierda/Derecha",
+        "No usar contracciones (a el / de el)",
+        "Error en demostrativos (Este/Ese/Aquel)"
+      ],
+      "gramaticaProhibida": "Subjuntivo; Perífrasis de futuro.",
+      "feedbackPipboy": "1. [Diagnóstico]: Fallo de existencia/ubicación. 'Hay' para existencia indeterminada, 'Está' para objetivos fijos. 2. [Diagnóstico]: Error de fusión sintáctica. 'A+el' y 'De+el' se fusionan siempre. Usa 'Al' y 'Del'. 3. [Diagnóstico]: Error de triangulación. 'Este' (cerca), 'Ese' (media), 'Aquel' (lejos).",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Describe la ubicación de los objetos en la sala de operaciones usando preposiciones de lugar.", "prompt": "Eres un agente veterano guiando al recluta por el cuartel. Pídele que te describa dónde están objetos clave usando preposiciones de lugar. Evalúa Hay/Está, preposiciones, demostrativos. Nivel A1.2." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta un informe de localización de 3 objetos de la base usando hay/está y preposiciones.", "prompt": "El agente debe enviar un informe escrito describiendo dónde están 3 objetos del cuartel usando Hay/Está y preposiciones de lugar. Evalúa nivel A1.2." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el mapa del cuartel descrito en el manual táctico y responde las preguntas.", "prompt": "Genera un manual táctico breve (80 palabras) que describe la ubicación de salas y objetos en el cuartel. Incluye 3 preguntas de comprensión sobre localización. Nivel A1.2." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Escucha las instrucciones de navegación del cuartel e identifica la ruta.", "prompt": "Genera una transcripción de radio con instrucciones de navegación por el cuartel (gira a la izquierda, sube al segundo piso, etc.) con [ESTÁTICA] en momentos clave. Nivel A1.2." }
+      }
+    },
+    {
+      "id": "A1.3",
+      "macro": "A1",
+      "nombre": "Rutinas del Agente",
+      "descripcionNarrativa": "Seguimiento de patrones de movimiento y horarios de seguridad.",
+      "metaComunicativa": "Informar sobre acciones habituales y sincronizar tiempos.",
+      "morfosintaxis": "Presente Indicativo Regular/Irregular (e>ie, o>ue, e>i); Verbos reflexivos; Marcadores de frecuencia; Verbos -GO; Verbo Saber; Conectores causales.",
+      "verbos": ["Salir", "Volver", "Poder", "Dormir", "Levantarse", "Ducharse", "Hacer", "Poner", "Traer", "Decir", "Venir", "Saber"],
+      "vocabulario": ["siempre", "nunca", "tarde", "noche", "reloj", "hora", "rutina", "normalmente", "horario"],
+      "erroresCriticos": [
+        "Error en diptongación (Volo por Vuelo)",
+        "Olvidar el pronombre reflexivo en rutinas (Yo ducho)",
+        "Regularización de la 1ª persona en verbos -GO (yo haco, yo salo)",
+        "Error en irregularidad mixta (yo deces por dices)",
+        "Omisión de marcadores de frecuencia"
+      ],
+      "gramaticaProhibida": "Imperfecto y Condicional.",
+      "feedbackPipboy": "1. [Diagnóstico]: Sincronización fallida. Verbos como Hacer/Salir terminan en '-go' (Yo hago). 2. [Diagnóstico]: Error de protocolo personal. El pronombre reflexivo (me, te, se) va ANTES del verbo. 3. [Diagnóstico]: Falta de precisión temporal. Use marcadores de frecuencia.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Describe tu rutina diaria como agente al oficial de operaciones.", "prompt": "Eres el oficial de operaciones. Pregunta al agente sobre su rutina diaria de vigilancia. Evalúa verbos reflexivos, irregulares -GO, marcadores de frecuencia. Nivel A1.3." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Envía el informe de tu rutina semanal de vigilancia en al menos 4 frases.", "prompt": "El agente debe enviar un informe de su rutina semanal de vigilancia usando verbos reflexivos y marcadores de frecuencia. Evalúa nivel A1.3." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el horario de vigilancia del objetivo e identifica sus rutinas clave.", "prompt": "Genera un diario de rutinas de un objetivo (80 palabras) con verbos de rutina diaria e irregulares. 3 preguntas de comprensión. Nivel A1.3." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el informe de rutinas del turno de noche con [estática].", "prompt": "Genera transcripción de informe oral sobre rutinas de vigilancia con [ESTÁTICA] en datos clave. El estudiante debe reconstruir el horario. Nivel A1.3." }
+      }
+    },
+    {
+      "id": "A1.4",
+      "macro": "A1",
+      "nombre": "Estado del Operativo",
+      "descripcionNarrativa": "Reconocimiento de objetivos por físico y reporte de bajas/salud.",
+      "metaComunicativa": "Describir personas (ropa/físico) y expresar estados internos.",
+      "morfosintaxis": "Ser vs Estar (Rasgos vs Estados); Verbo Llevar (ropa); Verbo Gustar; Verbo Doler; Posesivos átonos; Cuantificadores de grado.",
+      "verbos": ["Parecer", "Llevar", "Sentirse", "Gustar", "Doler", "Tener"],
+      "vocabulario": ["gafa", "barba", "uniforme", "herido", "cansado", "asustado", "cabeza", "espalda", "guantes"],
+      "erroresCriticos": [
+        "Confundir Es cansado (aburrido) con Está cansado (fatiga)",
+        "Mal uso de concordancia en sustantivos y adjetivos",
+        "Error en cuantificadores (Muy + adj / Mucho + sustantivo)"
+      ],
+      "gramaticaProhibida": "Pretérito Indefinido.",
+      "feedbackPipboy": "1. [Diagnóstico]: Confusión de estado/esencia. 'Ser' para rasgos permanentes, 'Estar' para estados. 2. [Diagnóstico]: Fallo en sensor de dolor. El verbo 'Doler' funciona como 'Gustar'. 3. [Diagnóstico]: Error de escala. 'Muy' con adjetivos, 'Mucho' con cosas.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Describe físicamente al objetivo sospechoso que acabas de ver.", "prompt": "Pide al agente que describa físicamente a un sospechoso (ropa, aspecto, estado). Evalúa Ser/Estar, Llevar, posesivos, cuantificadores. Nivel A1.4." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Envía el perfil físico y estado actual de un agente herido en 3 frases mínimo.", "prompt": "El agente debe enviar un perfil físico y estado de salud de un compañero herido. Evalúa Ser/Estar, Doler, posesivos, concordancia. Nivel A1.4." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el perfil del objetivo e identifica sus características físicas y estado.", "prompt": "Genera el perfil de un objetivo (80 palabras) con descripción física y estado emocional. 3 preguntas de comprensión. Nivel A1.4." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta la descripción física del sospechoso con [estática].", "prompt": "Genera transcripción de descripción física de un sospechoso con [ESTÁTICA] en características clave. Nivel A1.4." }
+      }
+    },
+    {
+      "id": "A2.1",
+      "macro": "A2",
+      "nombre": "Protocolo de Extracción: El Plan",
+      "descripcionNarrativa": "El agente coordina el futuro de la misión y la gestión de materiales recuperados.",
+      "metaComunicativa": "Expresar planes (Ir a), obligaciones (Tener que) y sustitución de objetos (LO/LA).",
+      "morfosintaxis": "Futuro Próximo (Ir a + Inf.); Perífrasis de obligación (Tener que, Hay que); Pronombres de Objeto Directo (LO, LA).",
+      "verbos": ["Ir a", "Tener que", "Traer", "Llevar", "Recoger", "Entregar"],
+      "vocabulario": ["plan", "coordenadas", "paquete", "contacto", "instrucciones", "objetivo", "maletín"],
+      "erroresCriticos": [
+        "Error futuro próximo (Voy hacer)",
+        "Error objeto directo (El paquete... la traigo)",
+        "Infinitivo por Imperativo (Traer el micro)"
+      ],
+      "gramaticaProhibida": "Futuro Simple (Haré); Condicional; Pluscuamperfecto.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error en proyección de planes. El futuro próximo requiere 'Ir + a + Infinitivo'. Corrección: 'Voy a extraer al agente'. 2. [Diagnóstico]: Objeto mal identificado. El pronombre (Lo/La) debe concordar con el género del objeto.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Comunica el plan de extracción al equipo usando ir a + infinitivo.", "prompt": "Eres el coordinador de la misión. Pide al agente que explique el plan de extracción usando Ir a + infinitivo y Tener que. Evalúa pronombres de objeto directo. Nivel A2.1." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el plan de extracción con al menos 4 acciones en futuro próximo.", "prompt": "El agente debe redactar un plan de extracción usando Ir a + infinitivo, Tener que y pronombres Lo/La. Evalúa nivel A2.1." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el plan de misión e identifica qué va a hacer cada agente.", "prompt": "Genera un plan de misión (90 palabras) con futuro próximo y obligaciones. 3 preguntas de comprensión. Nivel A2.1." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el briefing del plan de extracción con [estática].", "prompt": "Genera transcripción de briefing de misión con Ir a + infinitivo y Tener que. [ESTÁTICA] en acciones clave. Nivel A2.1." }
+      }
+    },
+    {
+      "id": "A2.2",
+      "macro": "A2",
+      "nombre": "Orden Inmediata y Reporte",
+      "descripcionNarrativa": "El agente debe dar órdenes directas de campo y reportar acciones recién finalizadas.",
+      "metaComunicativa": "Dominar el Imperativo (instrucciones) y el Pretérito Perfecto Compuesto.",
+      "morfosintaxis": "Imperativo (Tú/Usted); Pretérito Perfecto Compuesto (He, Has, Ha + Participio); Participios irregulares (abierto, dicho, hecho, visto).",
+      "verbos": ["Dar", "Decir", "Poner", "Hacer", "Ver", "Abrir", "Escribir"],
+      "vocabulario": ["ya", "todavía no", "orden", "urgente", "informe", "recién", "hoy", "esta mañana"],
+      "erroresCriticos": [
+        "Infinitivo por Imperativo (Traer el maletín)",
+        "Error en participios (Hacido por hecho)",
+        "Mal uso de Ya/Todavía no"
+      ],
+      "gramaticaProhibida": "Indefinido; Imperfecto.",
+      "feedbackPipboy": "1. [Diagnóstico]: Fallo en comando. Las órdenes directas requieren Imperativo. Corrección: 'TRAE el maletín'. 2. [Diagnóstico]: Reporte corrupto. El verbo hacer tiene participio irregular (Hecho). Corrección: 'Ya lo HE HECHO'.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Da órdenes urgentes al equipo y reporta las acciones completadas.", "prompt": "Simula una situación de urgencia. El agente debe dar órdenes (Imperativo) y reportar qué ha hecho (Pretérito Perfecto). Evalúa participios irregulares. Nivel A2.2." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Envía el reporte de las acciones ya completadas esta mañana.", "prompt": "El agente debe enviar un reporte de acciones completadas usando Pretérito Perfecto e Imperativo. Evalúa participios irregulares y Ya/Todavía no. Nivel A2.2." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el informe de operaciones de esta mañana e identifica qué se ha hecho.", "prompt": "Genera informe de operaciones (90 palabras) con Pretérito Perfecto e Imperativo. 3 preguntas. Nivel A2.2." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta las órdenes del comandante con [estática].", "prompt": "Genera transcripción de órdenes urgentes con Imperativo y Pretérito Perfecto. [ESTÁTICA] en comandos clave. Nivel A2.2." }
+      }
+    },
+    {
+      "id": "A2.3",
+      "macro": "A2",
+      "nombre": "Informe de Campo: El Suceso",
+      "descripcionNarrativa": "El agente debe reportar eventos críticos que ya han finalizado en el pasado.",
+      "metaComunicativa": "Narrar hechos puntuales y biografías usando el Pretérito Indefinido.",
+      "morfosintaxis": "Pretérito Indefinido (Regulares e irregulares: fui, hice, estuve, tuve); Marcadores temporales de pasado puntuales.",
+      "verbos": ["Ir", "Ser", "Hacer", "Estar", "Tener", "Poner", "Poder"],
+      "vocabulario": ["ayer", "anoche", "el lunes pasado", "hace dos días", "informe", "éxito", "fallo"],
+      "erroresCriticos": [
+        "Presente por pasado (Ayer hago)",
+        "Error raíz irregular (Hici por hice)",
+        "Marcador incorrecto (Hoy fui por ayer fui)"
+      ],
+      "gramaticaProhibida": "Tiempos compuestos (He hecho); Subjuntivo; Imperfecto.",
+      "feedbackPipboy": "1. [Diagnóstico]: Desfase temporal en informe. Las acciones terminadas requieren Pretérito Indefinido. 2. [Diagnóstico]: Fallo en verbo irregular. 'Estar' y 'Hacer' tienen raíces especiales (Estuve/Hice).",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Narra oralmente lo que ocurrió ayer durante la misión de vigilancia.", "prompt": "El agente debe narrar verbalmente lo que ocurrió ayer en la misión. Evalúa Pretérito Indefinido regular e irregular. Nivel A2.3." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el informe de campo de la misión del lunes pasado.", "prompt": "El agente redacta informe de una misión pasada usando Pretérito Indefinido y marcadores temporales. Evalúa irregulares: fui, hice, estuve. Nivel A2.3." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el diario de operaciones de la semana pasada e identifica los eventos.", "prompt": "Genera diario de operaciones (90 palabras) en Pretérito Indefinido. 3 preguntas de comprensión temporal. Nivel A2.3." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el informe oral de la misión nocturna con [estática].", "prompt": "Genera transcripción de informe de misión nocturna en Pretérito Indefinido con [ESTÁTICA]. Nivel A2.3." }
+      }
+    },
+    {
+      "id": "A2.4",
+      "macro": "A2",
+      "nombre": "Perfil del Objetivo: El Escenario",
+      "descripcionNarrativa": "El agente debe describir entornos, estados y personas en el pasado.",
+      "metaComunicativa": "Describir situaciones, lugares y personas en pasado usando el Pretérito Imperfecto.",
+      "morfosintaxis": "Pretérito Imperfecto (regulares e irregulares: era, iba, veía); Descripción de estados climáticos, físicos y mentales en pasado.",
+      "verbos": ["Ser", "Ir", "Ver", "Estar", "Haber (Había)", "Tener"],
+      "vocabulario": ["antes", "en aquel momento", "siempre", "descripción", "sospechoso", "vigilancia"],
+      "erroresCriticos": [
+        "Usar Indefinido para descripciones (Ayer fue nublado)",
+        "Error en irregulares de Imperfecto (Sía por Era)"
+      ],
+      "gramaticaProhibida": "Subjuntivo; Condicional.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de ambientación. Las descripciones de escenarios en pasado usan Imperfecto. 2. [Diagnóstico]: Fallo en verbo base. El verbo 'Ser' en pasado descriptivo es 'Era'.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Describe el escenario de la misión pasada: ambiente, aspecto del objetivo, condiciones.", "prompt": "El agente debe describir el escenario de una misión pasada usando Imperfecto. Evalúa era/había/estaba, descripciones de ambiente y personas. Nivel A2.4." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el perfil del objetivo con su descripción física y estado cuando lo viste.", "prompt": "El agente redacta perfil de objetivo en pasado usando Pretérito Imperfecto para descripción. Evalúa Ser/Estar en imperfecto. Nivel A2.4." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el perfil del escenario de misión e identifica las descripciones.", "prompt": "Genera perfil de escenario (90 palabras) con Imperfecto para descripciones. 3 preguntas. Nivel A2.4." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta la descripción del escenario de la misión con [estática].", "prompt": "Genera transcripción descriptiva de escenario en Imperfecto con [ESTÁTICA]. Nivel A2.4." }
+      }
+    },
+    {
+      "id": "A2.5",
+      "macro": "A2",
+      "nombre": "Debriefing: El Contraste",
+      "descripcionNarrativa": "El agente explica una interrupción o un suceso puntual mientras ocurría otra acción.",
+      "metaComunicativa": "Dominar el contraste entre Pretérito Indefinido e Imperfecto.",
+      "morfosintaxis": "Contraste Indefinido/Imperfecto; Uso de conectores temporales (Cuando, Mientras); Pretérito Perfecto Compuesto.",
+      "verbos": ["Verbos de acción vs verbos de estado"],
+      "vocabulario": ["de repente", "de pronto", "todavía no", "ya", "mientras tanto", "interrupción"],
+      "erroresCriticos": [
+        "Confundir tiempos en interrupción (Cuando entré, el espía se fue en vez de se iba)",
+        "Mal uso de Ya/Todavía no"
+      ],
+      "gramaticaProhibida": "Pluscuamperfecto; Estructuras hipotéticas.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de cronología. Use Imperfecto para la acción en curso e Indefinido para la interrupción. 2. [Diagnóstico]: Fallo de reporte. 'Ya' para acciones listas, 'Todavía no' para pendientes.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Explica qué pasó de repente durante la misión y qué hacías en ese momento.", "prompt": "El agente narra una interrupción durante la misión usando contraste Indefinido/Imperfecto. Evalúa conectores Cuando/Mientras, De repente. Nivel A2.5." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el informe de debriefing explicando el incidente con el contraste de tiempos.", "prompt": "El agente redacta debriefing usando contraste Indefinido/Imperfecto y conectores temporales. Evalúa nivel A2.5." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el informe del incidente e identifica la secuencia de acciones.", "prompt": "Genera informe de incidente (100 palabras) con contraste Indefinido/Imperfecto. 3 preguntas de secuencia. Nivel A2.5." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el relato del incidente nocturno con [estática] en los momentos clave.", "prompt": "Genera transcripción de relato de incidente con contraste de tiempos y [ESTÁTICA]. Nivel A2.5." }
+      }
+    },
+    {
+      "id": "B1.1",
+      "macro": "B1",
+      "nombre": "Reclutamiento y Deseos",
+      "descripcionNarrativa": "El agente expresa los requisitos ideales para un nuevo operativo y sus deseos para la misión.",
+      "metaComunicativa": "Expresar voluntad, deseos y planes futuros con Presente de Subjuntivo.",
+      "morfosintaxis": "Presente de Subjuntivo (regulares e irregulares: sea, tenga, haga, vaya).",
+      "verbos": ["Querer que", "Esperar que", "Desear que", "Necesitar que"],
+      "vocabulario": ["ojalá", "perfil", "candidato", "equipo", "requisito"],
+      "erroresCriticos": [
+        "Fallo de Matriz: Indicativo tras verbos de deseo/voluntad",
+        "Sujeto omitido: No diferenciar el deseo propio del deseo hacia otros"
+      ],
+      "gramaticaProhibida": "Subjuntivo Imperfecto; Condicional; Pasados de Subjuntivo.",
+      "feedbackPipboy": "1. [Diagnóstico]: Fallo de matriz. El deseo sobre un tercero activa el Subjuntivo. Corrección: 'Espero que TENGAS éxito'. 2. [Diagnóstico]: Error de nexo. Con sujetos distintos, el infinitivo es inválido.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Expresa tus requisitos para el nuevo agente del equipo usando querer que + subjuntivo.", "prompt": "El agente expresa requisitos para reclutar a alguien usando Querer que/Esperar que + Subjuntivo. Evalúa Presente de Subjuntivo. Nivel B1.1." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el perfil ideal del candidato usando deseos y requisitos en subjuntivo.", "prompt": "El agente redacta perfil de candidato ideal usando verbos de deseo + Subjuntivo. Evalúa nivel B1.1." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee la solicitud de reclutamiento e identifica los requisitos en subjuntivo.", "prompt": "Genera solicitud de reclutamiento (100 palabras) con Presente de Subjuntivo. 3 preguntas. Nivel B1.1." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta la comunicación sobre el candidato ideal con [estática].", "prompt": "Genera transcripción sobre requisitos de candidato con Subjuntivo y [ESTÁTICA]. Nivel B1.1." }
+      }
+    },
+    {
+      "id": "B1.2",
+      "macro": "B1",
+      "nombre": "Radar de Emociones",
+      "descripcionNarrativa": "El agente comunica cómo le afectan los sucesos de la misión.",
+      "metaComunicativa": "Expresar sentimientos, estados de ánimo y valoraciones con Subjuntivo.",
+      "morfosintaxis": "Verbos de sentimiento + Subjuntivo; Valoraciones (Es bueno que, Es lógico que).",
+      "verbos": ["Alegrar", "Molestar", "Sentir", "Sorprender", "Gustar"],
+      "vocabulario": ["confianza", "traición", "miedo", "calma", "sospecha"],
+      "erroresCriticos": [
+        "Error de valoración: Usar Indicativo para sentimientos sobre hechos ajenos",
+        "Infinitivo redundante: Me alegra yo estar"
+      ],
+      "gramaticaProhibida": "Pretérito Pluscuamperfecto; Futuro de Subjuntivo.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error estructural. Las estructuras valorativas requieren el nexo 'que'. 2. [Diagnóstico]: Error de filtro subjetivo. Sentimientos sobre hechos ajenos exigen Subjuntivo.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Expresa cómo te afectan emocionalmente los últimos eventos de la misión.", "prompt": "El agente expresa sentimientos sobre los eventos de la misión usando verbos de emoción + Subjuntivo. Evalúa estructura. Nivel B1.2." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta un informe emocional sobre la traición de un compañero de equipo.", "prompt": "El agente redacta informe emocional usando verbos de sentimiento + Subjuntivo y valoraciones. Evalúa nivel B1.2." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el diario emocional del agente doble e identifica sus sentimientos.", "prompt": "Genera diario emocional (100 palabras) con verbos de sentimiento + Subjuntivo. 3 preguntas. Nivel B1.2." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta la comunicación emocional del agente con [estática].", "prompt": "Genera transcripción emocional con Subjuntivo y [ESTÁTICA]. Nivel B1.2." }
+      }
+    },
+    {
+      "id": "B1.3", "macro": "B1", "nombre": "El Canal de Influencia",
+      "descripcionNarrativa": "El agente debe influir en otros, dar consejos tácticos y transmitir órdenes.",
+      "metaComunicativa": "Expresar peticiones, consejos, prohibiciones y sugerencias con Subjuntivo.",
+      "morfosintaxis": "Verbos de influencia + Subjuntivo; Consejos (Te aconsejo que).",
+      "verbos": ["Pedir", "Sugerir", "Aconsejar", "Prohibir", "Ordenar"],
+      "vocabulario": ["sugerencia", "instrucción", "permiso", "advertencia"],
+      "erroresCriticos": ["Disfunción de mando: Confundir Decir informativo con Decir imperativo", "Sugerencia débil: No usar Subjuntivo con verbos de consejo"],
+      "gramaticaProhibida": "Futuro Próximo; Estructuras condicionales; Pasados del Subjuntivo.",
+      "feedbackPipboy": "1. [Diagnóstico]: Ambigüedad de mando. 'Decir que' + Subjuntivo implica una orden. 2. [Diagnóstico]: Fallo de influencia. Los consejos requieren Subjuntivo.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Da consejos tácticos al equipo usando te aconsejo que + subjuntivo.", "prompt": "El agente da consejos tácticos y órdenes usando verbos de influencia + Subjuntivo. Evalúa nivel B1.3." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta las instrucciones tácticas para el equipo de infiltración.", "prompt": "El agente redacta instrucciones usando verbos de influencia + Subjuntivo. Evalúa nivel B1.3." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee las instrucciones del comandante e identifica las peticiones en subjuntivo.", "prompt": "Genera instrucciones tácticas (100 palabras) con verbos de influencia + Subjuntivo. 3 preguntas. Nivel B1.3." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta las órdenes cifradas del comandante con [estática].", "prompt": "Genera transcripción de órdenes con verbos de influencia + Subjuntivo y [ESTÁTICA]. Nivel B1.3." }
+      }
+    },
+    {
+      "id": "B1.4", "macro": "B1", "nombre": "Crónica del Pasado: El Origen",
+      "descripcionNarrativa": "El agente reconstruye hechos pasados situándolos en un momento anterior a otro ya mencionado.",
+      "metaComunicativa": "Narrar con anterioridad en el pasado usando el Pretérito Pluscuamperfecto de Indicativo.",
+      "morfosintaxis": "Pretérito Pluscuamperfecto (Había + Participio); Marcadores: Ya, Todavía no.",
+      "verbos": ["Haber + visto, llegado, hecho, dicho, puesto"],
+      "vocabulario": ["antes", "anteriormente", "ya", "nunca antes"],
+      "erroresCriticos": ["Anacronía operativa: Usar Indefinido para acciones anteriores a la narrativa actual", "Fallo de marcador: Omitir Ya/Todavía no"],
+      "gramaticaProhibida": "Condicional Compuesto; Todo el modo Subjuntivo.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de cronología relativa. Para un hecho ANTES que otro pasado, es obligatorio el Pluscuamperfecto. 2. [Diagnóstico]: Fallo de anclaje. El marcador 'Ya' confirma la anterioridad.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Explica qué había pasado ya antes de que llegaras a la misión.", "prompt": "El agente narra eventos anteriores usando Pluscuamperfecto. Evalúa Había + participio y marcadores Ya/Todavía no. Nivel B1.4." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta la crónica de los eventos previos a la infiltración.", "prompt": "El agente redacta crónica con Pluscuamperfecto y marcadores temporales de anterioridad. Evalúa nivel B1.4." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee la crónica de los antecedentes de la operación.", "prompt": "Genera crónica (100 palabras) con Pluscuamperfecto. 3 preguntas de cronología. Nivel B1.4." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el relato de los antecedentes con [estática].", "prompt": "Genera transcripción de antecedentes con Pluscuamperfecto y [ESTÁTICA]. Nivel B1.4." }
+      }
+    },
+    {
+      "id": "B1.5", "macro": "B1", "nombre": "Hipótesis en el Campo",
+      "descripcionNarrativa": "El agente evalúa situaciones probables o dudosas sobre el paradero de objetivos.",
+      "metaComunicativa": "Expresar probabilidad y duda en el presente usando Subjuntivo vs. Indicativo.",
+      "morfosintaxis": "Marcadores de duda (Quizá, Tal vez, Es probable que).",
+      "verbos": ["Ser", "Estar", "Haber", "Parecer"],
+      "vocabulario": ["probable", "posible", "duda", "señal", "rastro"],
+      "erroresCriticos": ["Usar solo Indicativo con marcadores de duda", "Confusión de nexos (Quizá que...)"],
+      "gramaticaProhibida": "Subjuntivo Imperfecto.",
+      "feedbackPipboy": "1. [Diagnóstico]: Falta de matiz de duda. Con 'Quizá/Tal vez', el Subjuntivo indica probabilidad menor. 2. [Diagnóstico]: Error sintáctico. 'Quizá' y 'Tal vez' no llevan 'que'.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Especula sobre el paradero del objetivo usando quizá, tal vez, es probable.", "prompt": "El agente especula sobre paradero usando marcadores de duda + Subjuntivo/Indicativo. Evalúa nivel B1.5." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el informe de hipótesis sobre la localización del objetivo.", "prompt": "El agente redacta hipótesis usando marcadores de probabilidad. Evalúa Subjuntivo vs Indicativo. Nivel B1.5." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el informe de hipótesis e identifica los grados de probabilidad.", "prompt": "Genera informe de hipótesis (100 palabras) con marcadores de duda. 3 preguntas. Nivel B1.5." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta las especulaciones del equipo con [estática].", "prompt": "Genera transcripción de especulaciones con marcadores de duda y [ESTÁTICA]. Nivel B1.5." }
+      }
+    },
+    {
+      "id": "B1.6", "macro": "B1", "nombre": "Opinión y Contraespionaje",
+      "descripcionNarrativa": "El agente debate estrategias, desmiente información falsa y defiende su postura.",
+      "metaComunicativa": "Expresar opiniones, acuerdos y desacuerdos (No creo que + Subjuntivo).",
+      "morfosintaxis": "Verbos de opinión en negativa (No pensar, No creer) + Subjuntivo.",
+      "verbos": ["Creer", "Pensar", "Opinar", "Estar de acuerdo"],
+      "vocabulario": ["negación", "falso", "inteligencia", "debate"],
+      "erroresCriticos": ["Indicativo en opinión negativa (No creo que está)", "Subjuntivo en opinión afirmativa (Creo que esté)"],
+      "gramaticaProhibida": "Condicional Compuesto.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de matriz negativa. La negación del pensamiento exige Subjuntivo. 2. [Diagnóstico]: Exceso de Subjuntivo. Verbos de opinión en afirmativo usan Indicativo.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Debate la estrategia con el comandante, expresa acuerdo y desacuerdo.", "prompt": "El agente debate estrategia usando verbos de opinión con Indicativo/Subjuntivo según afirmativo/negativo. Evalúa nivel B1.6." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta tu análisis de contraespionaje desmintiendo la información falsa.", "prompt": "El agente redacta análisis con opiniones en positivo/negativo. Evalúa Indicativo vs Subjuntivo. Nivel B1.6." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el debate de estrategia e identifica las opiniones con su modo verbal.", "prompt": "Genera debate estratégico (100 palabras) con verbos de opinión. 3 preguntas de análisis. Nivel B1.6." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el debate del comité de estrategia con [estática].", "prompt": "Genera transcripción de debate con verbos de opinión y [ESTÁTICA]. Nivel B1.6." }
+      }
+    },
+    {
+      "id": "B1.7", "macro": "B1", "nombre": "Condiciones de la Misión",
+      "descripcionNarrativa": "El agente establece requisitos y límites para realizar una operación.",
+      "metaComunicativa": "Expresar condiciones reales o posibles usando Si + Indicativo y conectores.",
+      "morfosintaxis": "Oraciones condicionales reales (Si + Presente); Conectores: En caso de que.",
+      "verbos": ["Si + haces, vas, dices", "Siempre que"],
+      "vocabulario": ["condición", "límite", "riesgo", "extracción", "siempre que", "a condición de que", "en caso de que"],
+      "erroresCriticos": ["Subjuntivo tras Si (Si vayas...)", "Indicativo con En caso de que"],
+      "gramaticaProhibida": "Si + Subjuntivo (Imperfecto o Presente).",
+      "feedbackPipboy": "1. [Diagnóstico]: Error condicional. En condiciones reales, 'Si' rechaza el Subjuntivo. 2. [Diagnóstico]: Error de conector. 'En caso de que' siempre exige Subjuntivo.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Establece las condiciones de la misión: si ocurre X, haremos Y.", "prompt": "El agente establece condiciones de misión usando Si + Indicativo y conectores condicionales. Evalúa nivel B1.7." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el protocolo de contingencia con condiciones reales.", "prompt": "El agente redacta protocolo de contingencia con condicionales reales. Evalúa Si + Indicativo vs En caso de que + Subjuntivo. Nivel B1.7." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el protocolo de emergencia e identifica las condiciones.", "prompt": "Genera protocolo de emergencia (100 palabras) con condicionales. 3 preguntas. Nivel B1.7." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el protocolo de contingencia con [estática].", "prompt": "Genera transcripción de protocolo con condicionales y [ESTÁTICA]. Nivel B1.7." }
+      }
+    },
+    {
+      "id": "B1.8", "macro": "B1", "nombre": "El Reporte Final (B1)",
+      "descripcionNarrativa": "El agente consolida toda la información combinando descripción, narración y valoración.",
+      "metaComunicativa": "Consolidar el uso de pasados e introducir la valoración de hechos terminados.",
+      "morfosintaxis": "Contraste de pasados (repaso) + Valoración (Fue un error que...).",
+      "verbos": ["Ser (fue)", "Estar (estuvo)", "Haber (hubo)"],
+      "vocabulario": ["conclusión", "resumen", "éxito", "fracaso"],
+      "erroresCriticos": ["Mezclar Indefinido e Imperfecto en escena final", "Indicativo en valoración de pasado (Fue raro que se fue)"],
+      "gramaticaProhibida": "Futuro de Subjuntivo; Condicionales imposibles.",
+      "feedbackPipboy": "1. [Diagnóstico]: Fallo de reporte narrativo. Revisa el contraste entre acciones y descripciones pasadas. 2. [Diagnóstico]: Error de valoración de pasado. Valorar hechos terminados requiere Subjuntivo.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Presenta el reporte final de la operación B1 combinando todos los tiempos aprendidos.", "prompt": "El agente presenta reporte final combinando pasados, valoraciones y Subjuntivo. Evalúa consolidación B1. Nivel B1.8." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el informe de cierre de operación con análisis completo.", "prompt": "El agente redacta informe de cierre con contraste de pasados y valoraciones. Evalúa nivel B1.8." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el informe final de la operación e identifica todos los tiempos verbales usados.", "prompt": "Genera informe final (120 palabras) con mezcla de pasados y valoraciones. 3 preguntas de análisis. Nivel B1.8." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el reporte final del comandante con [estática].", "prompt": "Genera transcripción de reporte final con pasados mixtos y [ESTÁTICA]. Nivel B1.8." }
+      }
+    },
+    {
+      "id": "B2.1", "macro": "B2", "nombre": "El Pasado de la Sospecha",
+      "descripcionNarrativa": "El agente analiza eventos pasados sobre los que no tiene certeza total.",
+      "metaComunicativa": "Expresar probabilidad y duda sobre el pasado usando el Pretérito Perfecto de Subjuntivo.",
+      "morfosintaxis": "Pretérito Perfecto de Subjuntivo (Haya + Participio).",
+      "verbos": ["Haber, Tener, Estar, Ir, Ser + posible + Pretérito Perfecto de Subjuntivo"],
+      "vocabulario": ["quizá", "tal vez", "rastro", "evidencia", "paradero"],
+      "erroresCriticos": ["Usar Perfecto de Indicativo por Subjuntivo (Es posible que ha llegado)", "Confusión de participios irregulares"],
+      "gramaticaProhibida": "Subjuntivo Imperfecto.",
+      "feedbackPipboy": "1. [Diagnóstico]: Fallo de modo en pasado cercano. La probabilidad sobre un pasado reciente requiere 'haya + participio'.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Especula sobre lo que puede haber hecho el agente doble usando haya + participio.", "prompt": "El agente especula sobre acciones pasadas usando Perfecto de Subjuntivo. Evalúa Es posible que haya + participio. Nivel B2.1." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el análisis de sospecha sobre las acciones pasadas del infiltrado.", "prompt": "El agente redacta análisis de sospecha usando Perfecto de Subjuntivo. Evalúa nivel B2.1." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el informe de sospecha e identifica las dudas sobre el pasado.", "prompt": "Genera informe de sospecha (110 palabras) con Perfecto de Subjuntivo. 3 preguntas. Nivel B2.1." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta las especulaciones del equipo sobre el pasado con [estática].", "prompt": "Genera transcripción de especulaciones en Perfecto de Subjuntivo con [ESTÁTICA]. Nivel B2.1." }
+      }
+    },
+    {
+      "id": "B2.2", "macro": "B2", "nombre": "Protocolos Hipotéticos",
+      "descripcionNarrativa": "El agente debe plantear escenarios imaginarios o poco probables en el presente.",
+      "metaComunicativa": "Expresar hipótesis y condiciones improbables con el Pretérito Imperfecto de Subjuntivo.",
+      "morfosintaxis": "Pretérito Imperfecto de Subjuntivo (-ara/-ase).",
+      "verbos": ["Ser", "Tener", "Poder", "Haber", "Estar", "Querer"],
+      "vocabulario": ["escenario", "improbable", "suposición", "riesgo"],
+      "erroresCriticos": ["Usar Presente de Subjuntivo en hipótesis irreales (Si tenga dinero...)", "Error en la correlación (Si tuviera..., tengo...)"],
+      "gramaticaProhibida": "Condicional Compuesto; Pluscuamperfecto de Subjuntivo.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de grado de probabilidad. Situaciones hipotéticas poco probables requieren Imperfecto de Subjuntivo (-ra/-se). 2. [Diagnóstico]: Fallo de correlación. Debe ir acompañado de un Condicional.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Plantea escenarios hipotéticos sobre la misión: qué harías si tuvieras más recursos.", "prompt": "El agente plantea hipótesis con Si + Imperfecto de Subjuntivo + Condicional. Evalúa correlación temporal. Nivel B2.2." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el análisis de escenarios hipotéticos para la operación.", "prompt": "El agente redacta escenarios hipotéticos usando Imperfecto de Subjuntivo + Condicional. Evalúa nivel B2.2." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el análisis de escenarios hipotéticos del comandante.", "prompt": "Genera análisis de escenarios (110 palabras) con Imperfecto de Subjuntivo. 3 preguntas. Nivel B2.2." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el debate sobre escenarios hipotéticos con [estática].", "prompt": "Genera transcripción de debate hipotético con Imperfecto de Subjuntivo y [ESTÁTICA]. Nivel B2.2." }
+      }
+    },
+    {
+      "id": "B2.3", "macro": "B2", "nombre": "Cortesía en la Embajada",
+      "descripcionNarrativa": "El agente debe realizar peticiones extremadamente educadas en contextos de riesgo.",
+      "metaComunicativa": "Usar el Imperfecto de Subjuntivo y Condicional para peticiones de cortesía.",
+      "morfosintaxis": "Contraste Imperfecto de Subjuntivo / Condicional Simple.",
+      "verbos": ["Querer", "Poder", "Deber", "Ser", "Haber"],
+      "vocabulario": ["cortesía", "protocolo", "embajada", "diplomacia"],
+      "erroresCriticos": ["Uso de presente para peticiones de alto nivel", "Olvido del condicional en consejos"],
+      "gramaticaProhibida": "Imperativo directo (limitado por protocolo).",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de registro/cortesía. En contextos diplomáticos, el Imperfecto de Subjuntivo suaviza la petición. 2. [Diagnóstico]: Consejo demasiado directo. Usa el Condicional para sugerencias.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Realiza peticiones diplomáticas al embajador usando quisiera/podría.", "prompt": "El agente realiza peticiones diplomáticas en la embajada usando Imperfecto de Subjuntivo y Condicional. Evalúa registro formal. Nivel B2.3." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta la solicitud formal al embajador en tono diplomático.", "prompt": "El agente redacta solicitud diplomática usando Quisiera, Podría, Sería posible. Evalúa nivel B2.3." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee la correspondencia diplomática e identifica las peticiones formales.", "prompt": "Genera correspondencia diplomática (110 palabras) con registro formal. 3 preguntas. Nivel B2.3." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta la conversación diplomática en la embajada con [estática].", "prompt": "Genera transcripción de conversación diplomática con Condicional y [ESTÁTICA]. Nivel B2.3." }
+      }
+    },
+    {
+      "id": "B2.4", "macro": "B2", "nombre": "El Dilema del Informante",
+      "descripcionNarrativa": "El agente evalúa sentimientos y valoraciones sobre acciones pasadas ya finalizadas.",
+      "metaComunicativa": "Valorar hechos pasados con Pretérito Imperfecto de Subjuntivo.",
+      "morfosintaxis": "Estructuras de valoración de pasado + Subjuntivo Imperfecto.",
+      "verbos": ["Molestar", "Ser", "Parecer", "Estar"],
+      "vocabulario": ["reacción", "suceso", "conducta", "lealtad"],
+      "erroresCriticos": ["Usar Presente de Subjuntivo para valorar el pasado", "Indicativo en valoración negativa de pasado"],
+      "gramaticaProhibida": "Futuro de Subjuntivo.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de salto temporal. Si el verbo principal es pasado, la subordinada debe ser Imperfecto de Subjuntivo. 2. [Diagnóstico]: Fallo de matriz valorativa. Valorar un hecho pasado real exige Subjuntivo.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Valora las acciones pasadas del informante: lo que te molestó, lo que te sorprendió.", "prompt": "El agente valora acciones pasadas usando estructuras Me molestó que + Imperfecto de Subjuntivo. Evalúa nivel B2.4." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el análisis de la conducta del informante usando valoraciones de pasado.", "prompt": "El agente redacta análisis con valoraciones de pasado + Imperfecto de Subjuntivo. Evalúa nivel B2.4." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el diario del dilema e identifica las valoraciones sobre el pasado.", "prompt": "Genera diario de dilema (110 palabras) con valoraciones de pasado. 3 preguntas. Nivel B2.4." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta la valoración del comandante sobre el informante con [estática].", "prompt": "Genera transcripción de valoraciones de pasado con [ESTÁTICA]. Nivel B2.4." }
+      }
+    },
+    {
+      "id": "B2.5", "macro": "B2", "nombre": "Arrepentimiento del Espía",
+      "descripcionNarrativa": "El agente analiza decisiones pasadas y sus consecuencias alternativas.",
+      "metaComunicativa": "Expresar hipótesis imposibles en el pasado con el Pretérito Pluscuamperfecto de Subjuntivo.",
+      "morfosintaxis": "Pretérito Pluscuamperfecto de Subjuntivo (Hubiera/hubiese + part.).",
+      "verbos": ["Tener", "Saber", "Ser", "Estar", "Haber"],
+      "vocabulario": ["arrepentimiento", "error", "oportunidad", "alternativa"],
+      "erroresCriticos": ["Usar Imperfecto de Subjuntivo para hechos pasados (Si tuviera ayer...)", "Error en la estructura condicional (Si hubiera..., había...)"],
+      "gramaticaProhibida": "Mezclar con futuro simple.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de temporalidad en hipótesis. Para hechos del pasado que no ocurrieron, usa Pluscuamperfecto de Subjuntivo. 2. [Diagnóstico]: Fallo de correlación irreal. Si + Pluscuamperfecto de Subjuntivo → Condicional Compuesto.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Expresa tus arrepentimientos: qué hubiera pasado si hubieras tomado otra decisión.", "prompt": "El agente expresa arrepentimientos usando Si + Pluscuamperfecto de Subjuntivo + Condicional Compuesto. Evalúa nivel B2.5." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el análisis de las decisiones alternativas que podrías haber tomado.", "prompt": "El agente redacta análisis de arrepentimientos con Pluscuamperfecto de Subjuntivo. Evalúa correlación. Nivel B2.5." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el diario de arrepentimientos del espía y analiza las hipótesis imposibles.", "prompt": "Genera diario de arrepentimientos (110 palabras) con Pluscuamperfecto de Subjuntivo. 3 preguntas. Nivel B2.5." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta la confesión del agente sobre sus errores del pasado con [estática].", "prompt": "Genera transcripción de confesión con Pluscuamperfecto de Subjuntivo y [ESTÁTICA]. Nivel B2.5." }
+      }
+    },
+    {
+      "id": "B2.6", "macro": "B2", "nombre": "El Informe del Infiltrado",
+      "descripcionNarrativa": "El agente transmite información compleja, órdenes y peticiones dichas por otros en el pasado.",
+      "metaComunicativa": "Dominar el Estilo Indirecto avanzado (correlación de tiempos de Indicativo y Subjuntivo).",
+      "morfosintaxis": "Estilo Indirecto: cambios en tiempos verbales (dijo que..., pidió que...).",
+      "verbos": ["Decir", "Comentar", "Solicitar", "Ordenar", "Advertir"],
+      "vocabulario": ["declaración", "testimonio", "reporte", "mensaje"],
+      "erroresCriticos": ["No trasladar el tiempo verbal en estilo indirecto", "Usar Indicativo cuando se transmite una orden pasada"],
+      "gramaticaProhibida": "No usar los tiempos verbales pertinentes.",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de correlación temporal. En el pasado, el presente de la cita se convierte en imperfecto. 2. [Diagnóstico]: Fallo de transmisión de mandato. Al reportar un mandato pasado, usar Imperfecto de Subjuntivo.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Transmite al comandante lo que dijo el informante usando estilo indirecto.", "prompt": "El agente transmite información usando Estilo Indirecto con correlación de tiempos. Evalúa nivel B2.6." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el informe con las declaraciones del testigo usando estilo indirecto.", "prompt": "El agente redacta informe con Estilo Indirecto avanzado. Evalúa correlación de tiempos. Nivel B2.6." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el testimonio y transforma las citas directas a estilo indirecto.", "prompt": "Genera testimonio (110 palabras) con citas directas. El estudiante las transforma a indirecto. 3 preguntas. Nivel B2.6." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el testimonio del testigo con [estática] y reporta lo que dijo.", "prompt": "Genera transcripción de testimonio con [ESTÁTICA]. El estudiante usa Estilo Indirecto para reportar. Nivel B2.6." }
+      }
+    },
+    {
+      "id": "B2.7", "macro": "B2", "nombre": "Negociación y Obstáculos",
+      "descripcionNarrativa": "El agente debe justificar planes a pesar de las dificultades y establecer finalidades claras.",
+      "metaComunicativa": "Usar oraciones concesivas (aunque + subj.) y finales (para que / con el fin de que).",
+      "morfosintaxis": "Conectores concesivos y finales + Subjuntivo.",
+      "verbos": ["Tener", "Decir", "Ser", "Esperar", "Hablar", "Estar", "Ir"],
+      "vocabulario": ["obstáculo", "pese a", "objetivo", "finalidad", "plan", "aunque", "para que", "de modo que"],
+      "erroresCriticos": ["Usar Indicativo tras Para que (Para que entiendes)", "Usar Indicativo con Aunque para obstáculos no experimentados"],
+      "gramaticaProhibida": "Presente de Subjuntivo (si el contexto es pasado).",
+      "feedbackPipboy": "1. [Diagnóstico]: Error de finalidad. Las oraciones de finalidad con distinto sujeto exigen siempre Subjuntivo. 2. [Diagnóstico]: Error de matiz concesivo. Con 'Aunque', el Subjuntivo indica que el obstáculo es hipotético.",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Negocia el plan pese a los obstáculos usando aunque + subjuntivo y para que.", "prompt": "El agente negocia usando conectores concesivos y finales + Subjuntivo. Evalúa nivel B2.7." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta la propuesta de negociación justificando el plan pese a los riesgos.", "prompt": "El agente redacta propuesta con concesivas y finales + Subjuntivo. Evalúa nivel B2.7." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee la propuesta de negociación e identifica los conectores y sus usos.", "prompt": "Genera propuesta de negociación (110 palabras) con conectores concesivos y finales. 3 preguntas. Nivel B2.7." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta la negociación con obstáculos con [estática].", "prompt": "Genera transcripción de negociación con conectores + Subjuntivo y [ESTÁTICA]. Nivel B2.7." }
+      }
+    },
+    {
+      "id": "B2.8", "macro": "B2", "nombre": "Archivo Clasificado (B2)",
+      "descripcionNarrativa": "El agente realiza un análisis crítico final de la operación, integrando todos los matices del B2.",
+      "metaComunicativa": "Consolidar la alternancia de modos y tiempos complejos en un reporte de alta fidelidad.",
+      "morfosintaxis": "Repaso integral: Alternancia de todos los tiempos de Subjuntivo.",
+      "verbos": ["Todos los verbos"],
+      "vocabulario": ["balance", "análisis", "conclusión", "síntesis"],
+      "erroresCriticos": ["Inconsistencia modal en párrafos largos", "Error de selección entre Imperfecto y Pluscuamperfecto de Subjuntivo"],
+      "gramaticaProhibida": "Errores de niveles A1-A2 (se asumen superados).",
+      "feedbackPipboy": "1. [Diagnóstico]: Incoherencia narrativa de alto nivel. Mantén la correlación de tiempos. 2. [Diagnóstico]: Error de aspecto temporal. Diferencia entre condición en el presente (fuera) y en el pasado (hubiera sido).",
+      "desafios": {
+        "oral": { "tipo": "Expresión Oral", "nombre": "Canal de Voz", "descripcion": "Presenta el análisis crítico final de la operación completa.", "prompt": "El agente presenta análisis crítico final integrando todos los tiempos de Subjuntivo. Evalúa coherencia y alternancia modal. Nivel B2.8." },
+        "escrita": { "tipo": "Expresión Escrita", "nombre": "Terminal de Mensajería", "descripcion": "Redacta el informe clasificado final con todos los matices del B2.", "prompt": "El agente redacta informe final con alternancia de todos los tiempos de Subjuntivo. Evalúa nivel B2.8." },
+        "lectora": { "tipo": "Comprensión Lectora", "nombre": "Diario Encontrado", "descripcion": "Lee el archivo clasificado final y analiza la complejidad gramatical.", "prompt": "Genera archivo clasificado (130 palabras) con alternancia de modos. 3 preguntas de análisis avanzado. Nivel B2.8." },
+        "auditiva": { "tipo": "Comprensión Auditiva", "nombre": "Audio Log", "descripcion": "Intercepta el informe final de alto nivel con [estática].", "prompt": "Genera transcripción de informe final complejo con todos los Subjuntivos y [ESTÁTICA]. Nivel B2.8." }
+      }
+    }
+  ]
+}

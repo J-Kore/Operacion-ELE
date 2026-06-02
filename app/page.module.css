@@ -1,0 +1,191 @@
+.boot {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+  animation: flicker 6s infinite;
+}
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 157, 0.025) 2px,
+    rgba(0, 255, 157, 0.025) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: min(480px, 90vw);
+  text-align: center;
+}
+
+/* PIP-BOY ICON */
+.pipboyIcon {
+  margin-bottom: 24px;
+}
+
+.pipboyCircle {
+  width: 90px;
+  height: 90px;
+  border: 2px solid var(--pip);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 20px var(--pip-glow-strong),
+    inset 0 0 20px var(--pip-glow);
+  animation: pulse-glow 3s infinite;
+}
+
+.pipboyScreen {
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--pip-dim);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pip-dark);
+}
+
+.pipboyFace {
+  font-size: 1.8rem;
+}
+
+/* TITLE */
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 10vw, 4.5rem);
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: var(--pip);
+  text-shadow:
+    0 0 20px var(--pip-glow-strong),
+    0 0 60px var(--pip-glow);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-family: var(--font-vt);
+  font-size: clamp(1rem, 4vw, 1.6rem);
+  letter-spacing: 0.4em;
+  color: var(--pip-dim);
+  margin-bottom: 4px;
+}
+
+.tagline {
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  color: rgba(0, 255, 157, 0.4);
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+/* BARS */
+.bars {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.barBlock {
+  text-align: left;
+}
+
+.barLabel {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--pip-dim);
+  margin-bottom: 4px;
+}
+
+.barTrack {
+  height: 8px;
+  background: var(--pip-dark);
+  border: 1px solid rgba(0, 255, 157, 0.3);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--pip);
+  box-shadow: 0 0 8px var(--pip-glow-strong);
+  transition: width 0.15s linear;
+}
+
+/* LOG */
+.logLine {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--pip-dim);
+  height: 1rem;
+  margin-bottom: 32px;
+  min-height: 1rem;
+}
+
+/* ENTER BUTTON */
+.enterBtn {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  padding: 14px 40px;
+  border: 2px solid var(--pip);
+  background: transparent;
+  color: var(--pip);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  animation: pulse-glow 2s infinite, fadeInUp 0.5s ease;
+  margin-bottom: 32px;
+}
+
+.enterBtn:hover {
+  background: var(--pip);
+  color: var(--bg);
+  box-shadow: 0 0 30px var(--pip-glow-strong);
+  transform: scale(1.02);
+}
+
+/* WAITING DOTS */
+.waiting {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+  height: 48px;
+  align-items: center;
+}
+
+.waitDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pip);
+  animation: blink 1s infinite;
+}
+
+/* VERSION */
+.versionInfo {
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  color: rgba(0, 255, 157, 0.25);
+}

@@ -1,0 +1,156 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* TOP BAR */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--pip-dim);
+  background: rgba(0,255,157,0.04);
+  flex-wrap: wrap;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: clamp(0.75rem, 2.5vw, 1.2rem);
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 10px var(--pip-glow-strong);
+  white-space: nowrap;
+}
+
+.logoAccent { color: var(--amber); }
+
+.topStats {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statLabel {
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  color: var(--pip-dim);
+  text-transform: uppercase;
+}
+
+.statVal {
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+.clock {
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: var(--pip-dim);
+  white-space: nowrap;
+}
+
+/* XP BAR */
+.xpBarWrap {
+  background: rgba(0,255,157,0.04);
+  border-bottom: 1px solid rgba(0,255,157,0.1);
+}
+
+.xpBarTrack {
+  height: 3px;
+  background: var(--pip-dark);
+  overflow: hidden;
+}
+
+.xpBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pip-dim), var(--pip));
+  box-shadow: 0 0 8px var(--pip-glow-strong);
+  transition: width 0.8s ease;
+}
+
+/* NAV TABS */
+.navTabs {
+  display: flex;
+  border-bottom: 1px solid var(--pip-dim);
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: rgba(0,255,157,0.02);
+}
+
+.navTabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--pip-dim);
+  border-right: 1px solid rgba(0,255,157,0.15);
+  transition: all 0.2s;
+  white-space: nowrap;
+  text-transform: uppercase;
+  text-decoration: none;
+  gap: 2px;
+}
+
+.tab:hover {
+  color: var(--pip);
+  background: var(--pip-glow);
+}
+
+.tabActive {
+  color: var(--bg);
+  background: var(--pip);
+}
+
+.tabIcon {
+  font-size: 0.9rem;
+}
+
+.tabLabel {
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  padding: 16px;
+  animation: fadeInUp 0.25s ease;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .topStats { gap: 8px; }
+  .tab { padding: 8px 10px; }
+  .topBar { padding: 6px 10px; }
+  .main { padding: 10px; }
+  /* Ocultar texto de tabs en móvil muy pequeño, solo iconos */
+}
+
+@media (max-width: 400px) {
+  .tabLabel { display: none; }
+  .tabIcon  { font-size: 1.1rem; }
+  .tab      { padding: 10px 12px; }
+}

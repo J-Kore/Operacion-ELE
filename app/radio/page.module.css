@@ -1,0 +1,212 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--pip-dim);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: clamp(0.7rem, 2vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.badge {
+  font-size: 0.5rem;
+  padding: 2px 8px;
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  letter-spacing: 0.15em;
+  animation: pulse-glow 2s infinite;
+}
+
+/* WAVE */
+.waveContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 50px;
+  margin: 10px 0;
+}
+
+.waveBar {
+  width: 5px;
+  background: var(--pip);
+  border-radius: 2px;
+  box-shadow: 0 0 4px var(--pip-glow-strong);
+  min-height: 4px;
+}
+
+/* MIC */
+.micArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0 12px;
+}
+
+.micBtn {
+  width: 72px;
+  height: 72px;
+  border: 2px solid var(--amber);
+  border-radius: 50%;
+  background: var(--pip-dark);
+  font-size: 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 0 10px rgba(255,184,48,0.2);
+}
+
+.micBtn:hover {
+  background: rgba(255,184,48,0.1);
+  box-shadow: 0 0 20px rgba(255,184,48,0.35);
+}
+
+.micBtnActive {
+  border-color: var(--red-alert) !important;
+  background: rgba(255,68,68,0.15) !important;
+  box-shadow: 0 0 20px rgba(255,68,68,0.3) !important;
+  animation: pulse-glow 1s infinite;
+}
+
+.micStatus {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--amber);
+  text-transform: uppercase;
+}
+
+.micStatusActive {
+  color: var(--red-alert);
+}
+
+/* CANALES */
+.canalItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+  border-bottom: 1px solid rgba(0,255,157,0.08);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.canalItem:last-child { border-bottom: none; }
+.canalItem:hover:not(.canalBloqueado) { background: var(--pip-glow); }
+
+.canalBloqueado {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.canalActivo {
+  border-left: 2px solid var(--pip);
+  padding-left: 8px;
+}
+
+.canalIndicador {
+  font-size: 0.7rem;
+  color: var(--pip);
+  flex-shrink: 0;
+  width: 14px;
+}
+
+.canalBadge {
+  margin-left: auto;
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  padding: 2px 6px;
+  border: 1px solid rgba(0,255,157,0.3);
+  color: var(--pip-dim);
+  flex-shrink: 0;
+}
+
+.canalBadgeActivo {
+  border-color: var(--pip);
+  color: var(--pip);
+}
+
+.canalBadgeLocked {
+  border-color: rgba(255,68,68,0.3);
+  color: rgba(255,68,68,0.5);
+}
+
+/* ACCESOS RÁPIDOS */
+.accesoBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border: 1px solid rgba(0,255,157,0.3);
+  background: transparent;
+  color: var(--pip);
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  min-height: 90px;
+}
+
+.accesoBtn:hover { background: var(--pip-glow); border-color: var(--pip); }
+
+.acceso_amber { border-color: rgba(255,184,48,0.35); color: var(--amber); }
+.acceso_amber:hover { background: rgba(255,184,48,0.08); border-color: var(--amber); }
+
+.acceso_cyan { border-color: rgba(0,200,255,0.35); color: var(--cyan); }
+.acceso_cyan:hover { background: rgba(0,200,255,0.08); border-color: var(--cyan); }
+
+.acceso_purple { border-color: rgba(200,100,255,0.35); color: var(--purple); }
+.acceso_purple:hover { background: rgba(200,100,255,0.08); border-color: var(--purple); }
+
+.acceso_green { border-color: rgba(0,255,157,0.35); }
+
+/* SEÑALES */
+.senalesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.senalItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(0,255,157,0.08);
+  font-size: 0.6rem;
+}
+
+.senalItem:last-child { border-bottom: none; }
+
+.senalId {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--amber);
+  min-width: 40px;
+}
+
+.senalNombre {
+  flex: 1;
+  color: var(--pip-dim);
+  font-size: 0.58rem;
+}
+
+@media (max-width: 480px) {
+  .micBtn { width: 60px; height: 60px; font-size: 1.6rem; }
+}

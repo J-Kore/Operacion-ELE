@@ -82,6 +82,7 @@ function OnboardingTooltip({ habilidad, onClose }: { habilidad: HabilidadType; o
 }
 
 export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMision }: Props) {
+  const { play } = usePipBoySound()
   const [mensajes, setMensajes]           = useState<MensajeChat[]>([])
   const [input, setInput]                 = useState('')
   const [cargando, setCargando]           = useState(false)

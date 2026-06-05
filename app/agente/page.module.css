@@ -148,6 +148,7 @@
   gap: 8px;
   padding: 8px 0;
   border-bottom: 1px solid rgba(0,255,157,0.08);
+  flex-wrap: wrap;
 }
 
 .atributo:last-child { border-bottom: none; }
@@ -159,6 +160,7 @@
   font-size: var(--text-sm);     /* 14px */
   letter-spacing: 0.06em;
   flex: 1;
+  min-width: 80px;
 }
 
 /* era 0.5rem — ilegible */
@@ -171,12 +173,13 @@
   flex-shrink: 0;
 }
 
-.dots { display: flex; gap: 4px; }
+.dots { display: flex; gap: 4px; flex-shrink: 0; }
 
 .dot {
   width: 12px;
   height: 12px;
   border: 1px solid rgba(0,255,157,0.25);
+  flex-shrink: 0;
 }
 
 .dotFilled {

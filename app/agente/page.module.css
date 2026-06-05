@@ -107,15 +107,18 @@
   gap: 4px;
   border-top: 1px solid rgba(0,255,157,0.15);
   padding-top: 10px;
+  overflow: hidden;
 }
 
 .rangoItem {
   flex: 1;
   text-align: center;
-  padding: 8px 4px;
+  padding: 6px 2px;
   border: 1px solid rgba(0,255,157,0.15);
   opacity: 0.35;
   transition: all 0.2s;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .rangoActive {
@@ -134,11 +137,14 @@
 
 /* era 0.4rem (6px) — completamente ilegible */
 .rangoNombre {
-  font-size: var(--text-xs);     /* 12px */
-  letter-spacing: 0.08em;
+  font-size: 0.7rem;     /* 12px */
+  letter-spacing: 0.03em;
   color: var(--pip-dim);
   margin-top: 3px;
   text-transform: uppercase;
+  white-space: normal;
+  line-height: 1.2;
+  word-break: break-word;
 }
 
 /* ── ATRIBUTOS ── */

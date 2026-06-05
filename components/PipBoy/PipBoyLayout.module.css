@@ -165,6 +165,7 @@
   animation: fadeInUp 0.25s ease;
   overflow-y: auto;      /* scroll interno aquí, no en la página */
   min-height: 0;             /* truco CSS: fuerza que flex respete el límite */
+  contain: strict;
 }
 
 /* ── RESPONSIVE ── */

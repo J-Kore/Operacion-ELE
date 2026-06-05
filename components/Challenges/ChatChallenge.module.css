@@ -44,7 +44,7 @@
 }
 
 .onboardingHabilidad {
-  font-size: 0.5rem;
+  font-size: var(--text-xs);
   letter-spacing: 0.3em;
   color: var(--amber);
   text-transform: uppercase;
@@ -61,7 +61,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 0.62rem;
+  font-size: var(--text-sm);
   color: var(--pip-dim);
   line-height: 1.6;
   letter-spacing: 0.04em;
@@ -74,7 +74,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.6rem;
+  font-size: var(--text-xs);
   font-family: var(--font-display);
   font-weight: 700;
   color: var(--pip);
@@ -88,7 +88,7 @@
   background: transparent;
   color: var(--pip);
   font-family: var(--font-display);
-  font-size: 0.65rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   letter-spacing: 0.25em;
   cursor: pointer;
@@ -419,4 +419,65 @@
   .onboarding { padding: 12px; }
   .terminal { height: clamp(180px, 45vw, 260px); }
   .hfStatus { font-size: 0.55rem; }
+}
+
+/* ── MICRÓFONO — añadir al final de ChatChallenge.module.css ──
+   Estos estilos son NUEVOS. No reemplaza el archivo completo,
+   solo pega este bloque al final del CSS existente. */
+
+/* Botón circular del micrófono */
+.micBtn {
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--amber);
+  border-radius: 50%;
+  background: var(--pip-dark);
+  color: var(--amber);
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.2s;
+  align-self: flex-end;          /* se alinea con la base del textarea */
+  margin-bottom: 2px;
+  box-shadow: 0 0 8px rgba(255, 184, 48, 0.2);
+}
+
+.micBtn:hover:not(:disabled) {
+  background: rgba(255, 184, 48, 0.12);
+  box-shadow: 0 0 16px rgba(255, 184, 48, 0.35);
+}
+
+/* Estado activo: grabando */
+.micBtnActive {
+  border-color: var(--red-alert) !important;
+  background: rgba(255, 68, 68, 0.15) !important;
+  color: var(--red-alert) !important;
+  box-shadow: 0 0 16px rgba(255, 68, 68, 0.3) !important;
+}
+
+/* Estado no soportado */
+.micBtnDisabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: rgba(0, 255, 157, 0.2);
+  color: var(--pip-dim);
+}
+
+/* Anillo de pulso mientras graba */
+.micPulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--red-alert);
+  animation: micRing 1.2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes micRing {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
 }

@@ -1,9 +1,10 @@
 'use client'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Subnivel, HabilidadType, MensajeChat } from '@/lib/types'
-import { HFStatus } from '@/lib/huggingface'
 import { usePipBoySound } from '@/hooks/usePipBoySound'
 import styles from './ChatChallenge.module.css'
+
+// ── Eliminamos la importación de HFStatus (era de huggingface.ts, ya no existe)
 
 interface Props {
   subnivel: Subnivel
@@ -13,20 +14,15 @@ interface Props {
 }
 
 const HABILIDAD_CONFIG = {
-  oral:     { icon: '📡', color: 'amber',  label: 'EXPRESIÓN ORAL',      canal: 'Canal de Voz α-7',         instruccion: 'Responde en español al mensaje del NPC. Habla como si fueras un agente secreto.' },
-  escrita:  { icon: '⌨️', color: 'cyan',   label: 'EXPRESIÓN ESCRITA',   canal: 'Terminal de Mensajería',   instruccion: 'Escribe tu respuesta en español. Puedes tomarte más tiempo para revisar antes de enviar.' },
-  lectora:  { icon: '📄', color: 'purple', label: 'COMPRENSIÓN LECTORA', canal: 'Inventario de Pistas',     instruccion: 'Lee el texto con atención y responde las preguntas de comprensión en español.' },
-  auditiva: { icon: '🎧', color: 'green',  label: 'COMPRENSIÓN AUDITIVA', canal: 'Audio Log Interceptado', instruccion: 'Lee la transcripción de radio (con [ESTÁTICA]) e infiere lo que falta. Responde las preguntas.' },
+  oral:     { icon: '📡', color: 'amber',  label: 'EXPRESIÓN ORAL',       canal: 'Canal de Voz α-7',         instruccion: 'Pulsa el micrófono y habla en español. El sistema transcribirá tu voz automáticamente.' },
+  escrita:  { icon: '⌨️', color: 'cyan',   label: 'EXPRESIÓN ESCRITA',    canal: 'Terminal de Mensajería',   instruccion: 'Escribe tu respuesta en español. Puedes tomarte más tiempo para revisar antes de enviar.' },
+  lectora:  { icon: '📄', color: 'purple', label: 'COMPRENSIÓN LECTORA',  canal: 'Inventario de Pistas',     instruccion: 'Lee el texto con atención y responde las preguntas de comprensión en español.' },
+  auditiva: { icon: '🎧', color: 'green',  label: 'COMPRENSIÓN AUDITIVA', canal: 'Audio Log Interceptado',   instruccion: 'Lee la transcripción de radio (con [ESTÁTICA]) e infiere lo que falta. Responde las preguntas.' },
 }
 
-const HF_STATUS_MSG: Record<string, string> = {
-  cold_start: '⏳ El modelo IA se está iniciando (puede tardar ~30 s la primera vez)...',
-  retrying:   '🔄 Reconectando con el servidor...',
-  ok:         '',
-  error:      '⚠ Error de conexión. Reintentando...',
-}
 
-// Confetti Pip-Boy: partículas verdes al completar
+
+// ── Overlay de éxito con partículas Pip-Boy ──
 function SuccessOverlay({ xp }: { xp: number }) {
   return (
     <div className={styles.successOverlay}>
@@ -36,7 +32,6 @@ function SuccessOverlay({ xp }: { xp: number }) {
         <div className={styles.successXp}>+{xp} XP</div>
         <div className={styles.successSub}>Siguiente desafío desbloqueado</div>
       </div>
-      {/* partículas CSS */}
       {Array.from({ length: 12 }).map((_, i) => (
         <div key={i} className={styles.particle} style={{ '--i': i } as React.CSSProperties} />
       ))}
@@ -44,7 +39,7 @@ function SuccessOverlay({ xp }: { xp: number }) {
   )
 }
 
-// Tooltip de onboarding para la primera misión
+// ── Onboarding para primera misión ──
 function OnboardingTooltip({ habilidad, onClose }: { habilidad: HabilidadType; onClose: () => void }) {
   const cfg = HABILIDAD_CONFIG[habilidad]
   return (
@@ -81,25 +76,55 @@ function OnboardingTooltip({ habilidad, onClose }: { habilidad: HabilidadType; o
   )
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// COMPONENTE PRINCIPAL
+// ────────────────────────────────────────────────────────────────────────────
+
 export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMision }: Props) {
   const { play } = usePipBoySound()
-  const [mensajes, setMensajes]           = useState<MensajeChat[]>([])
-  const [input, setInput]                 = useState('')
-  const [cargando, setCargando]           = useState(false)
-  const [hfStatus, setHfStatus]           = useState<HFStatus>('idle')
-  const [hfMsg, setHfMsg]                 = useState('')
-  const [intento, setIntento]             = useState(1)
-  const [completado, setCompletado]       = useState(false)
-  const [xpGanado, setXpGanado]           = useState(0)
-  const [mostrarExito, setMostrarExito]   = useState(false)
-  const [feedbackTecnico, setFeedbackTecnico] = useState<string | null>(null)
-  const [capa, setCapa]                   = useState<1|2|3>(1)
-  const [showOnboarding, setShowOnboarding] = useState(false)
-  const terminalRef = useRef<HTMLDivElement>(null)
-  const inputRef    = useRef<HTMLTextAreaElement>(null)
-  const cfg = HABILIDAD_CONFIG[habilidad]
 
-  // Mostrar onboarding en primera misión (guardado en localStorage para no repetir)
+  // ── Estado del chat ──
+  const [mensajes, setMensajes]               = useState<MensajeChat[]>([])
+  const [input, setInput]                     = useState('')
+  const [cargando, setCargando]               = useState(false)
+  const [intento, setIntento]                 = useState(1)
+  const [completado, setCompletado]           = useState(false)
+  const [xpGanado, setXpGanado]               = useState(0)
+  const [mostrarExito, setMostrarExito]       = useState(false)
+  const [feedbackTecnico, setFeedbackTecnico] = useState<string | null>(null)
+  const [capa, setCapa]                       = useState<1|2|3>(1)
+  const [showOnboarding, setShowOnboarding]   = useState(false)
+  const [apiMsg, setApiMsg]                   = useState('')
+
+  // ── Estado del micrófono (solo para habilidad oral) ──
+  // 'idle'        → sin grabar, botón disponible
+  // 'recording'   → grabando, animación activa
+  // 'processing'  → transcribiendo (Web Speech es casi instantáneo)
+  // 'unsupported' → navegador no compatible (Safari)
+  const [micStatus, setMicStatus] = useState<'idle' | 'recording' | 'processing' | 'unsupported'>('idle')
+
+  // Ref al objeto SpeechRecognition para poder llamar .stop() desde el botón
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const terminalRef    = useRef<HTMLDivElement>(null)
+  const inputRef       = useRef<HTMLTextAreaElement>(null)
+
+  const cfg = HABILIDAD_CONFIG[habilidad]
+  const esOral = habilidad === 'oral'
+
+  // ── Detectar soporte de Web Speech API al montar ──
+  useEffect(() => {
+    if (esOral) {
+      const SpeechRecognitionAPI =
+        typeof window !== 'undefined'
+          ? (window.SpeechRecognition || window.webkitSpeechRecognition)
+          : null
+      if (!SpeechRecognitionAPI) {
+        setMicStatus('unsupported')
+      }
+    }
+  }, [esOral])
+
+  // ── Onboarding primera misión ──
   useEffect(() => {
     if (primeraMision) {
       const visto = localStorage.getItem('ele-onboarding-visto')
@@ -113,17 +138,12 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
     setShowOnboarding(false)
   }
 
-  const onStatus = useCallback((s: HFStatus, msg?: string) => {
-    setHfStatus(s)
-    setHfMsg(msg ?? HF_STATUS_MSG[s] ?? '')
-  }, [])
-
-  // Cargar contenido inicial
+  // ── Cargar contenido inicial del NPC ──
   useEffect(() => {
     if (showOnboarding) return
     async function init() {
       setCargando(true)
-      setHfStatus('idle')
+      setApiMsg('Conectando con el servidor...')
       try {
         const res = await fetch('/api/generar-contenido', {
           method: 'POST',
@@ -135,29 +155,112 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
       } catch {
         setMensajes([{
           role: 'assistant',
-          content: `[SEÑAL ESTABLECIDA — ${cfg.canal}] Agente, ¿listo para comenzar?`,
+          content: `[SEÑAL ESTABLECIDA — ${cfg.canal}] Agente, listo para comenzar.`,
         }])
       } finally {
         setCargando(false)
-        setHfMsg('')
+        setApiMsg('')
       }
     }
     init()
   }, [subnivel.id, habilidad, showOnboarding])
 
-  // Auto-scroll
+  // ── Auto-scroll al final del terminal ──
   useEffect(() => {
-    if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight
+    }
   }, [mensajes, cargando])
+
+  // ────────────────────────────────────────────────────────────────────────
+  // WEB SPEECH API — Lógica del micrófono
+  // Solo se activa para habilidad === 'oral'
+  // ────────────────────────────────────────────────────────────────────────
+
+  function iniciarGrabacion() {
+    if (cargando || completado || micStatus === 'unsupported') return
+
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognitionAPI) return
+
+    const recognition = new SpeechRecognitionAPI()
+    recognitionRef.current = recognition
+
+    // Configuración para español
+    recognition.lang = 'es-ES'
+    recognition.continuous = true      // para cuando detecta silencio
+    recognition.interimResults = true   // muestra texto provisional mientras habla
+
+    recognition.onstart = () => {
+      setMicStatus('recording')
+      play('click')
+    }
+
+    // onresult se dispara con cada fragmento de texto reconocido
+    // Los resultados 'interim' son provisionales, el 'final' es el definitivo
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let textoAcumulado = ''
+      for (let i = 0; i < event.results.length; i++) {
+        textoAcumulado += event.results[i][0].transcript
+      }
+      setInput(textoAcumulado)
+    }
+
+    recognition.onend = () => {
+      setMicStatus('idle')
+      recognitionRef.current = null
+      // Si hay texto transcrito, enfocamos el input para que pueda editar antes de enviar
+      inputRef.current?.focus()
+    }
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error('[SpeechRecognition] Error:', event.error)
+      setMicStatus('idle')
+      recognitionRef.current = null
+
+      // Errores comunes y mensajes amigables
+      if (event.error === 'not-allowed') {
+        setApiMsg('⚠ Permiso de micrófono denegado. Actívalo en la configuración del navegador.')
+      } else if (event.error === 'no-speech') {
+        setApiMsg('No se detectó voz. Pulsa el micrófono e intenta de nuevo.')
+        setTimeout(() => setApiMsg(''), 3000)
+      }
+    }
+
+    recognition.start()
+  }
+
+  function detenerGrabacion() {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop()
+      setMicStatus('idle')
+    }
+  }
+
+  function toggleMic() {
+    if (micStatus === 'recording') {
+      detenerGrabacion()
+    } else {
+      iniciarGrabacion()
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────────────
+  // ENVIAR MENSAJE AL NPC
+  // ────────────────────────────────────────────────────────────────────────
 
   async function enviarMensaje() {
     if (!input.trim() || cargando || completado) return
+
+    // Si el mic sigue activo al pulsar transmitir, lo paramos primero
+    if (micStatus === 'recording') detenerGrabacion()
+
     const userMsg = input.trim()
     play('transmit')
     setInput('')
     setCargando(true)
     setFeedbackTecnico(null)
-    setHfMsg('')
+    setApiMsg('')
 
     const newMensajes: MensajeChat[] = [...mensajes, { role: 'user', content: userMsg }]
     setMensajes(newMensajes)
@@ -166,14 +269,26 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subnivel, habilidad, historial: mensajes, mensaje: userMsg, intento }),
+        body: JSON.stringify({
+          subnivel,
+          habilidad,
+          historial: mensajes,
+          mensaje: userMsg,
+          intento,
+        }),
       })
       const data = await res.json()
 
       setMensajes([...newMensajes, { role: 'assistant', content: data.feedbackNarrativo }])
       setCapa(data.capa)
-      if (data.feedbackTecnico) { play('error'); setFeedbackTecnico(data.feedbackTecnico) }
-      if (data.miniEjercicio)   setFeedbackTecnico(p => `${p ?? ''}\n\n📋 MINI-EJERCICIO: ${data.miniEjercicio}`)
+
+      if (data.feedbackTecnico) {
+        play('error')
+        setFeedbackTecnico(data.feedbackTecnico)
+      }
+      if (data.miniEjercicio) {
+        setFeedbackTecnico(p => `${p ?? ''}\n\nMINI-EJERCICIO: ${data.miniEjercicio}`)
+      }
 
       if (data.exito) {
         const xp = data.xpGanado ?? 50
@@ -186,21 +301,31 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
         setIntento(i => i + 1)
       }
     } catch {
-      setMensajes(prev => [...prev, { role: 'assistant', content: '[INTERFERENCIA] La señal se ha cortado. Reintentando...' }])
+      setMensajes(prev => [
+        ...prev,
+        { role: 'assistant', content: '[INTERFERENCIA] La señal se ha cortado. Reintentando...' },
+      ])
     } finally {
       setCargando(false)
-      setHfMsg('')
+      setApiMsg('')
     }
   }
 
   function handleKey(e: React.KeyboardEvent) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensaje() }
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      enviarMensaje()
+    }
   }
+
+  // ────────────────────────────────────────────────────────────────────────
+  // RENDER
+  // ────────────────────────────────────────────────────────────────────────
 
   return (
     <div className={styles.wrapper}>
 
-      {/* ONBOARDING — primera misión */}
+      {/* ONBOARDING */}
       {showOnboarding && (
         <OnboardingTooltip habilidad={habilidad} onClose={cerrarOnboarding} />
       )}
@@ -208,9 +333,9 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
       {/* SUCCESS OVERLAY */}
       {mostrarExito && <SuccessOverlay xp={xpGanado} />}
 
-      {/* HEADER */}
       {!showOnboarding && (
         <>
+          {/* HEADER */}
           <div className={`${styles.header} pip-panel`}>
             <span className={styles.headerIcon}>{cfg.icon}</span>
             <div className={styles.headerBody}>
@@ -224,18 +349,21 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
             }
           </div>
 
-          {/* ESTADO HF (cold start / retrying) */}
-          {hfMsg && (
+          {/* MENSAJES DE ESTADO (conexión, errores de mic...) */}
+          {apiMsg && (
             <div className={styles.hfStatus}>
               <div className={styles.hfStatusDot} />
-              {hfMsg}
+              {apiMsg}
             </div>
           )}
 
-          {/* TERMINAL */}
+          {/* TERMINAL DE MENSAJES */}
           <div className={`terminal ${styles.terminal}`} ref={terminalRef}>
             {mensajes.map((m, i) => (
-              <div key={i} className={`${styles.mensaje} ${m.role === 'user' ? styles.user : styles.npc}`}>
+              <div
+                key={i}
+                className={`${styles.mensaje} ${m.role === 'user' ? styles.user : styles.npc}`}
+              >
                 <span className={styles.roleLabel}>{m.role === 'user' ? 'AGT >' : 'NPC >'}</span>
                 <span className={styles.content}>{m.content}</span>
               </div>
@@ -258,33 +386,73 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
             </div>
           )}
 
-          {/* INDICADOR DE CAPA */}
+          {/* INDICADOR DE INTENTO / CAPA */}
           {intento > 1 && !completado && (
             <div className={styles.intentoIndicador}>
               <span className="text-muted text-xs">
                 INTENTO {intento} — CAPA {capa}: {capa === 1 ? 'INMERSIÓN' : capa === 2 ? 'SOPORTE PIP-BOY' : 'RECALIBRACIÓN'}
               </span>
               <div className={styles.intentoDots}>
-                {[1,2,3].map(n => (
-                  <div key={n} className={`${styles.intentoDot} ${intento >= n ? styles.intentoDotActive : ''} ${capa === n ? styles.intentoDotCurrent : ''}`} />
+                {[1, 2, 3].map(n => (
+                  <div
+                    key={n}
+                    className={`${styles.intentoDot} ${intento >= n ? styles.intentoDotActive : ''} ${capa === n ? styles.intentoDotCurrent : ''}`}
+                  />
                 ))}
               </div>
             </div>
           )}
 
-          {/* INPUT / COMPLETADO */}
+          {/* ── ÁREA DE INPUT ──
+              Para habilidad ORAL: micrófono + textarea + botón transmitir
+              Para el resto: solo textarea + botón transmitir
+          ── */}
           {!completado ? (
             <div className={styles.inputArea}>
+
+              {/* BOTÓN DE MICRÓFONO — solo en expresión oral */}
+              {esOral && (
+                <button
+                  className={`${styles.micBtn} ${micStatus === 'recording' ? styles.micBtnActive : ''} ${micStatus === 'unsupported' ? styles.micBtnDisabled : ''}`}
+                  onClick={toggleMic}
+                  disabled={cargando || completado || micStatus === 'unsupported'}
+                  title={
+                    micStatus === 'unsupported'
+                      ? 'Micrófono no disponible en este navegador (usa Chrome)'
+                      : micStatus === 'recording'
+                      ? 'Pulsa para detener la grabación'
+                      : 'Pulsa para hablar'
+                  }
+                  aria-label={micStatus === 'recording' ? 'Detener grabación' : 'Iniciar grabación de voz'}
+                >
+                  {/* Icono cambia según estado */}
+                  {micStatus === 'recording' ? '⏹' : micStatus === 'unsupported' ? '🚫' : '🎙️'}
+                  {/* Anillo de pulso visible solo al grabar */}
+                  {micStatus === 'recording' && <span className={styles.micPulse} />}
+                </button>
+              )}
+
+              {/* TEXTAREA — siempre visible, en oral muestra la transcripción en tiempo real */}
               <textarea
                 ref={inputRef}
                 className={styles.input}
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKey}
-                placeholder="Escribe tu respuesta, agente... (Enter para enviar, Shift+Enter nueva línea)"
+                placeholder={
+                  esOral
+                    ? micStatus === 'recording'
+                      ? '🔴 Grabando... habla en español'
+                      : micStatus === 'unsupported'
+                      ? 'Escribe tu respuesta (micrófono no disponible en Safari)'
+                      : 'Pulsa 🎙️ para hablar, o escribe directamente...'
+                    : 'Escribe tu respuesta, agente... (Enter para enviar)'
+                }
                 rows={3}
                 disabled={cargando}
               />
+
+              {/* BOTÓN TRANSMITIR */}
               <button
                 className={`pip-btn amber ${styles.sendBtn}`}
                 onClick={enviarMensaje}
@@ -295,11 +463,19 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
             </div>
           ) : (
             <div className={styles.exitoMsg}>
-              <span className="text-amber orbitron" style={{ fontSize: '0.75rem', letterSpacing: '0.2em' }}>
+              <span className="text-amber orbitron" style={{ fontSize: 'var(--text-sm)', letterSpacing: '0.2em' }}>
                 ✓ DESAFÍO SUPERADO — +{xpGanado} XP
               </span>
             </div>
           )}
+
+          {/* Aviso navegador incompatible */}
+          {esOral && micStatus === 'unsupported' && (
+            <div className="text-xs text-muted" style={{ textAlign: 'center', marginTop: 4 }}>
+              La expresión oral por voz requiere Chrome o Edge. En Safari puedes escribir tu respuesta.
+            </div>
+          )}
+
         </>
       )}
     </div>

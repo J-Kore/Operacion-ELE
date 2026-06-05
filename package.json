@@ -3,24 +3,25 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev":   "next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint":  "next lint"
+    "lint": "next lint"
   },
   "dependencies": {
-    "next":      "14.2.5",
-    "react":     "^18",
+    "next": "14.2.5",
+    "react": "^18",
     "react-dom": "^18"
   },
   "optionalDependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
-    "openai":            "^4.57.0"
+    "openai": "^4.57.0"
   },
   "devDependencies": {
-    "@types/node":       "^20",
-    "@types/react":      "^18",
-    "@types/react-dom":  "^18",
-    "typescript":        "^5"
+    "@types/dom-speech-recognition": "^0.0.11",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
   }
 }

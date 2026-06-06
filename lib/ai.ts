@@ -215,7 +215,7 @@ Respondes ÚNICAMENTE con JSON válido, sin texto adicional, sin bloques markdow
       [{ role: 'user', content: userMessage }],
       MAX_TOKENS_EVAL
     )
-
+    console.log('[evaluarRespuesta] raw:', raw)
     // Limpiamos por si el modelo añade bloques ```json ``` a pesar de las instrucciones
     const clean = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
 

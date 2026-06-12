@@ -120,6 +120,14 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
           : null
       if (!SpeechRecognitionAPI) {
         setMicStatus('unsupported')
+        // En iOS Safari existe pero falla — forzamos test real
+      } else {
+        try {
+          const test = new SpeechRecognitionAPI()
+          test.abort()
+        } catch {
+          setMicStatus('unsupported')
+        }
       }
     }
   }, [esOral])
@@ -187,10 +195,12 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
     recognitionRef.current = recognition
 
     // Configuración para español
+    const esIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
     recognition.lang = 'es-ES'
-    recognition.continuous = true      // para cuando detecta silencio
-    recognition.interimResults = true   // muestra texto provisional mientras habla
-
+    recognition.continuous = esIOS ? false : true
+    recognition.interimResults = esIOS ? false : true
+    recognition.maxAlternatives = 1
+    
     recognition.onstart = () => {
       setMicStatus('recording')
       play('click')
@@ -199,18 +209,28 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
     // onresult se dispara con cada fragmento de texto reconocido
     // Los resultados 'interim' son provisionales, el 'final' es el definitivo
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let textoAcumulado = ''
+      let finalTranscript = ''
+      let interimTranscript = ''
       for (let i = 0; i < event.results.length; i++) {
-        textoAcumulado += event.results[i][0].transcript
+        const result = event.results[i]
+        if (result.isFinal) {
+          finalTranscript += result[0].transcript
+        } else {
+          interimTranscript += result[0].transcript
+        }
       }
-      setInput(textoAcumulado)
+      setInput(finalTranscript || interimTranscript)
     }
 
     recognition.onend = () => {
-      setMicStatus('idle')
-      recognitionRef.current = null
-      // Si hay texto transcrito, enfocamos el input para que pueda editar antes de enviar
-      inputRef.current?.focus()
+      const esIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+      if (esIOS && micStatus === 'recording') {
+        try { recognition.start() } catch { setMicStatus('idle') }
+      } else {
+        setMicStatus('idle')
+        recognitionRef.current = null
+        inputRef.current?.focus()
+      }
     }
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {

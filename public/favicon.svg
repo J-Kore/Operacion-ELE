@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <!-- Fondo: negro Tron profundo con sutil luz inferior -->
+    <radialGradient id="esfera" cx="50%" cy="40%" r="75%">
+      <stop offset="0%"   stop-color="#06140d"/>
+      <stop offset="70%"  stop-color="#030a06"/>
+      <stop offset="100%" stop-color="#010402"/>
+    </radialGradient>
+
+    <!-- Glow neón: el corazón del look Tron -->
+    <filter id="neon" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Glow intenso para nodos principales -->
+    <filter id="neonStrong" x="-120%" y="-120%" width="340%" height="340%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Clip circular para la rejilla -->
+    <clipPath id="clip">
+      <circle cx="64" cy="64" r="60"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── ESFERA BASE ── -->
+  <circle cx="64" cy="64" r="62" fill="url(#esfera)"/>
+
+  <!-- ── REJILLA TRON: horizonte digital en perspectiva, mitad inferior ── -->
+  <g clip-path="url(#clip)" opacity="0.35">
+    <!-- Líneas horizontales — se comprimen hacia el horizonte (y=72) -->
+    <line x1="4" y1="124" x2="124" y2="124" stroke="#00cc7a" stroke-width="0.8"/>
+    <line x1="4" y1="112" x2="124" y2="112" stroke="#00cc7a" stroke-width="0.7"/>
+    <line x1="4" y1="101" x2="124" y2="101" stroke="#00cc7a" stroke-width="0.6"/>
+    <line x1="4" y1="92"  x2="124" y2="92"  stroke="#00cc7a" stroke-width="0.5"/>
+    <line x1="4" y1="85"  x2="124" y2="85"  stroke="#00cc7a" stroke-width="0.4"/>
+    <line x1="4" y1="79"  x2="124" y2="79"  stroke="#00cc7a" stroke-width="0.35"/>
+    <line x1="4" y1="75"  x2="124" y2="75"  stroke="#00cc7a" stroke-width="0.3"/>
+    <!-- Verticales en perspectiva — convergen al punto de fuga (64, 72) -->
+    <line x1="64" y1="72" x2="64"  y2="126" stroke="#00cc7a" stroke-width="0.5"/>
+    <line x1="64" y1="72" x2="34"  y2="126" stroke="#00cc7a" stroke-width="0.45"/>
+    <line x1="64" y1="72" x2="4"   y2="126" stroke="#00cc7a" stroke-width="0.4"/>
+    <line x1="64" y1="72" x2="94"  y2="126" stroke="#00cc7a" stroke-width="0.45"/>
+    <line x1="64" y1="72" x2="124" y2="126" stroke="#00cc7a" stroke-width="0.4"/>
+    <line x1="64" y1="72" x2="16"  y2="100" stroke="#00cc7a" stroke-width="0.35"/>
+    <line x1="64" y1="72" x2="112" y2="100" stroke="#00cc7a" stroke-width="0.35"/>
+  </g>
+
+  <!-- Línea de horizonte brillante — firma Tron -->
+  <line x1="6" y1="72" x2="122" y2="72" stroke="#00ff9d" stroke-width="1" opacity="0.5" filter="url(#neon)" clip-path="url(#clip)"/>
+
+  <!-- ── ANILLO EXTERIOR: doble borde estilo disco de Tron ── -->
+  <circle cx="64" cy="64" r="61" stroke="#00ff9d" stroke-width="1.8" opacity="0.9" filter="url(#neon)"/>
+  <circle cx="64" cy="64" r="57" stroke="#00cc7a" stroke-width="0.6" opacity="0.4"/>
+
+  <!-- ── CONSTELACIÓN DE ORIÓN — trazado de luz neón ── -->
+
+  <!-- Líneas estructura con glow -->
+  <g filter="url(#neon)">
+    <line x1="38" y1="26" x2="86" y2="36" stroke="#00cc7a" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+    <line x1="38" y1="26" x2="46" y2="60" stroke="#00cc7a" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+    <line x1="86" y1="36" x2="79" y2="57" stroke="#00cc7a" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+    <line x1="46" y1="60" x2="34" y2="94" stroke="#00cc7a" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+    <line x1="79" y1="57" x2="92" y2="88" stroke="#00cc7a" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+  </g>
+
+  <!-- Cinturón: el trazo de luz principal, como estela de Light Cycle -->
+  <g filter="url(#neonStrong)">
+    <line x1="46" y1="60" x2="62" y2="58.5" stroke="#00ff9d" stroke-width="3.2" stroke-linecap="round"/>
+    <line x1="62" y1="58.5" x2="79" y2="57" stroke="#00ff9d" stroke-width="3.2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Línea discontinua entre piernas -->
+  <line x1="34" y1="94" x2="92" y2="88" stroke="#00ff9d" stroke-width="1.4" stroke-dasharray="4,5" stroke-linecap="round" opacity="0.5" filter="url(#neon)"/>
+
+  <!-- ── NODOS: puntos de luz Tron ── -->
+
+  <!-- Betelgeuse: nodo principal con anillo tipo identity disc -->
+  <g filter="url(#neonStrong)">
+    <circle cx="38" cy="26" r="7" fill="#010402"/>
+    <circle cx="38" cy="26" r="7" stroke="#00ff9d" stroke-width="1.6"/>
+    <circle cx="38" cy="26" r="2.8" fill="#00ff9d"/>
+  </g>
+
+  <!-- Bellatrix -->
+  <g filter="url(#neon)">
+    <circle cx="86" cy="36" r="4.5" fill="#010402"/>
+    <circle cx="86" cy="36" r="4.5" stroke="#00cc7a" stroke-width="1.2"/>
+    <circle cx="86" cy="36" r="1.8" fill="#00cc7a"/>
+  </g>
+
+  <!-- Cinturón: Alnitak -->
+  <g filter="url(#neon)">
+    <circle cx="46" cy="60" r="3.8" fill="#00ff9d"/>
+  </g>
+
+  <!-- Cinturón: Alnilam (centro) -->
+  <g filter="url(#neonStrong)">
+    <circle cx="62" cy="58.5" r="4.6" fill="#00ff9d"/>
+  </g>
+
+  <!-- Cinturón: Mintaka -->
+  <g filter="url(#neon)">
+    <circle cx="79" cy="57" r="3.8" fill="#00ff9d"/>
+  </g>
+
+  <!-- Saiph -->
+  <g filter="url(#neon)">
+    <circle cx="34" cy="94" r="4.5" fill="#010402"/>
+    <circle cx="34" cy="94" r="4.5" stroke="#00cc7a" stroke-width="1.2"/>
+    <circle cx="34" cy="94" r="1.8" fill="#00cc7a"/>
+  </g>
+
+  <!-- Rigel-S: nodo de marca, estilo identity disc de Tron -->
+  <g filter="url(#neonStrong)">
+    <circle cx="92" cy="88" r="13" fill="#010402"/>
+    <circle cx="92" cy="88" r="13" stroke="#00ff9d" stroke-width="2"/>
+    <circle cx="92" cy="88" r="9.5" stroke="#00cc7a" stroke-width="0.6" opacity="0.5"/>
+    <text x="92" y="93.5" text-anchor="middle"
+      font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="700"
+      fill="#00ff9d">S</text>
+  </g>
+</svg>

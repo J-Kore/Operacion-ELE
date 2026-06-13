@@ -186,3 +186,55 @@
   .statLabel { display: none; }
   .topStats  { gap: 8px; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   FOOTER SILABOS — añadir al final de PipBoyLayout.module.css
+───────────────────────────────────────────────────────────────── */
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-top: 1px solid rgba(0, 255, 157, 0.08);
+  background: rgba(0, 255, 157, 0.02);
+  /* No crece — siempre pegado al fondo */
+  flex-shrink: 0;
+}
+
+/* Insignia SVG miniatura */
+.footerInsignia {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* "SILABOS" — Orbitron, discreto pero reconocible */
+.footerBrand {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--pip-dim);
+  opacity: 0.7;
+}
+
+.footerSep {
+  color: rgba(0, 255, 157, 0.2);
+  font-size: 0.55rem;
+}
+
+/* Subtítulo — más apagado todavía */
+.footerSub {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  color: rgba(0, 204, 122, 0.4);
+  text-transform: uppercase;
+}
+
+/* En pantallas muy pequeñas, ocultar el subtítulo del footer */
+@media (max-width: 400px) {
+  .footerSub { display: none; }
+  .footerSep { display: none; }
+}

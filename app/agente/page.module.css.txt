@@ -1,0 +1,386 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--pip-dim);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.25rem); /* era clamp(0.7rem...) */
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.badge {
+  font-size: var(--text-micro);  /* era 0.5rem — badge decorativo, vale */
+  padding: 3px 10px;
+  border: 1px solid var(--red-alert);
+  color: var(--red-alert);
+  letter-spacing: 0.15em;
+}
+
+/* ── AGENT CARD ── */
+.agentInner {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border: 2px solid var(--pip);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  background: var(--pip-dark);
+  flex-shrink: 0;
+  box-shadow: 0 0 15px var(--pip-glow), inset 0 0 15px var(--pip-glow);
+}
+
+.agentInfo { flex: 1; }
+
+.agentName {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 3vw, 1.3rem); /* era 0.95rem */
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 10px var(--pip-glow-strong);
+  margin-bottom: 2px;
+}
+
+/* era 0.55rem (9px) — completamente ilegible */
+.agentRank {
+  font-size: var(--text-xs);     /* 12px */
+  color: var(--amber);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* era 0.55rem — ilegible */
+.agentAlias {
+  font-size: var(--text-xs);     /* 12px */
+  color: var(--pip-dim);
+  letter-spacing: 0.15em;
+  margin-bottom: 2px;
+  font-family: var(--font-mono);
+}
+
+.xpBlock { margin-bottom: 10px; }
+
+.xpLabel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: var(--text-xs);     /* era sin definir, heredaba algo pequeño */
+}
+
+.statsRow {
+  display: flex;
+  gap: 12px;
+}
+
+.miniStat { text-align: center; }
+
+.miniStatVal {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);     /* era 0.9rem */
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+/* ── RANGOS ── */
+.rangos {
+  display: flex;
+  gap: 4px;
+  border-top: 1px solid rgba(0,255,157,0.15);
+  padding-top: 10px;
+  overflow: hidden;
+}
+
+.rangoItem {
+  flex: 1;
+  text-align: center;
+  padding: 6px 2px;
+  border: 1px solid rgba(0,255,157,0.15);
+  opacity: 0.35;
+  transition: all 0.2s;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.rangoActive {
+  opacity: 1;
+  border-color: var(--amber);
+  background: rgba(255,184,48,0.07);
+}
+
+/* era 0.8rem — razonable pero lo subimos con el resto */
+.rangoRep {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);     /* 14px */
+  font-weight: 900;
+  color: var(--amber);
+}
+
+/* era 0.4rem (6px) — completamente ilegible */
+.rangoNombre {
+  font-size: 0.7rem;     /* 12px */
+  letter-spacing: 0.03em;
+  color: var(--pip-dim);
+  margin-top: 3px;
+  text-transform: uppercase;
+  white-space: normal;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+/* ── ATRIBUTOS ── */
+.atributo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,255,157,0.08);
+  flex-wrap: wrap;
+}
+
+.atributo:last-child { border-bottom: none; }
+
+.atributoIcon { font-size: 1rem; width: 20px; flex-shrink: 0; }
+
+/* era 0.6rem (10px) — difícil de leer */
+.atributoLabel {
+  font-size: var(--text-sm);     /* 14px */
+  letter-spacing: 0.06em;
+  flex: 1;
+  min-width: 80px;
+}
+
+/* era 0.5rem — ilegible */
+.atributoVal {
+  font-size: var(--text-xs);     /* 12px */
+  color: var(--pip-dim);
+  letter-spacing: 0.05em;
+  min-width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.dots { display: flex; gap: 4px; flex-shrink: 0; }
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(0,255,157,0.25);
+  flex-shrink: 0;
+}
+
+.dotFilled {
+  background: var(--pip);
+  box-shadow: 0 0 5px var(--pip-glow-strong);
+}
+
+/* ── HABILIDADES (barras de competencia) ── */
+.habilidadesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* era 0.6rem — difícil de leer junto a las barras */
+.habilidadHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: var(--text-sm);     /* 14px */
+  letter-spacing: 0.06em;
+}
+
+/* ── HISTORIAL ── */
+.historialGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* era 0.6rem */
+.historialItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(0,255,157,0.08);
+  font-size: var(--text-xs);     /* 12px */
+}
+
+/* era 0.6rem */
+.historialId {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);     /* 12px */
+  font-weight: 700;
+  color: var(--amber);
+  min-width: 44px;
+}
+
+.historialNombre {
+  flex: 1;
+  color: var(--pip-dim);
+  letter-spacing: 0.04em;
+}
+
+.historialCheck {
+  color: var(--pip);
+  font-size: var(--text-xs);    /* era 0.65rem */
+}
+
+/* ── RESET ── */
+.resetZone {
+  padding-top: 4px;
+  border-top: 1px solid rgba(255,68,68,0.15);
+}
+
+.resetConfirm {
+  padding: 10px;
+  border: 1px solid var(--red-alert);
+  background: rgba(255,68,68,0.05);
+}
+
+/* ── PANEL TITLE ROW ── */
+.panelTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+/* era 0.5rem */
+.editBtn {
+  background: none;
+  border: 1px solid rgba(0,255,157,0.3);
+  color: var(--pip-dim);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);     /* 12px */
+  padding: 5px 10px;
+  cursor: pointer;
+  letter-spacing: 0.12em;
+  transition: all 0.2s;
+  min-height: 32px;
+}
+.editBtn:hover { border-color: var(--pip); color: var(--pip); }
+
+/* ── SESIONES ── */
+.sesiones {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0,255,157,0.1);
+  font-size: var(--text-xs);     /* aseguramos legibilidad */
+}
+
+/* ── MODAL NOMBRE ── */
+.modal {
+  border: 1px solid var(--pip);
+  background: var(--screen-bg, #030b05);
+  padding: 18px;
+  animation: fadeInUp 0.25s ease;
+  position: relative;
+}
+
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--pip), transparent);
+}
+
+/* era 0.75rem — razonable, lo dejamos igual */
+.modalTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);     /* 14px */
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--pip);
+  margin-bottom: 16px;
+}
+
+.modalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+/* era 0.5rem */
+.modalLabel {
+  font-size: var(--text-xs);     /* 12px */
+  letter-spacing: 0.2em;
+  color: var(--pip-dim);
+  text-transform: uppercase;
+}
+
+/* era 0.75rem — razonable, subimos ligeramente */
+.modalInput {
+  background: rgba(0,255,157,0.04);
+  border: 1px solid var(--pip-dim);
+  color: var(--pip);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);     /* 14px */
+  padding: 10px 12px;
+  letter-spacing: 0.1em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.modalInput:focus { border-color: var(--pip); box-shadow: 0 0 8px var(--pip-glow); }
+
+.modalActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* era 0.6rem */
+.modalBtn {
+  padding: 10px 18px;
+  border: 1px solid var(--pip-dim);
+  background: transparent;
+  color: var(--pip-dim);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);     /* 12px */
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  min-height: 40px;
+}
+.modalBtn:hover { border-color: var(--pip); color: var(--pip); background: var(--pip-glow); }
+
+.modalBtnPrimary {
+  border-color: var(--pip);
+  color: var(--pip);
+}
+.modalBtnPrimary:hover {
+  background: var(--pip);
+  color: var(--bg);
+}
+
+@media (max-width: 480px) {
+  .rangos { flex-wrap: wrap; }
+  .rangoItem { min-width: 52px; }
+}

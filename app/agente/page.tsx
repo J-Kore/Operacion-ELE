@@ -10,12 +10,14 @@ import { usePipBoySound } from '@/hooks/usePipBoySound'
 import nivelesData from '@/data/niveles.json'
 import styles from './page.module.css'
 
+type PaginaAgente = 'perfil' | 'atributos' | 'competencias'
+
 const ATRIBUTOS = [
-  { key: 'persuasion',        label: 'Persuasión',           icon: '🗣️', habilidad: 'oral',     max: 10 },
-  { key: 'analisisTextual',   label: 'Análisis Textual',     icon: '✏️', habilidad: 'escrita',  max: 10 },
-  { key: 'sigiloLinguistico', label: 'Sigilo Lingüístico',   icon: '🔍', habilidad: 'lectora',  max: 10 },
-  { key: 'descifrado',        label: 'Descifrado',           icon: '🔓', habilidad: 'auditiva', max: 10 },
-  { key: 'recepcionSenales',  label: 'Recepción de Señales', icon: '🎙️', habilidad: 'todos',    max: 10 },
+  { key: 'persuasion',        label: 'Persuasión',           icon: '🗣️' },
+  { key: 'analisisTextual',   label: 'Análisis Textual',     icon: '✏️' },
+  { key: 'sigiloLinguistico', label: 'Sigilo Lingüístico',   icon: '🔍' },
+  { key: 'descifrado',        label: 'Descifrado',           icon: '🔓' },
+  { key: 'recepcionSenales',  label: 'Recepción de Señales', icon: '🎙️' },
 ]
 
 const HABILIDADES = [
@@ -26,19 +28,26 @@ const HABILIDADES = [
 ]
 
 const RANGOS = [
-  { rep: 'D', nombre: 'Recluta',       color: '' },
-  { rep: 'C', nombre: 'Agente',        color: '' },
-  { rep: 'B', nombre: 'Operativo',     color: '' },
-  { rep: 'A', nombre: 'Agente Senior', color: '' },
-  { rep: 'S', nombre: 'Director',      color: 'amber' },
+  { rep: 'D', nombre: 'Recluta'  },
+  { rep: 'C', nombre: 'Agente'   },
+  { rep: 'B', nombre: 'Oper.'    },  // abreviado para móvil
+  { rep: 'A', nombre: 'Senior'   },  // abreviado para móvil
+  { rep: 'S', nombre: 'Director' },
+]
+
+const PAGINAS: { id: PaginaAgente; label: string; icon: string }[] = [
+  { id: 'perfil',       label: 'Perfil',       icon: '◉' },
+  { id: 'atributos',    label: 'Atributos',    icon: '⬡' },
+  { id: 'competencias', label: 'Competencias', icon: '▦' },
 ]
 
 export default function AgentePage() {
-  const [progreso,         setProgreso]         = useState<ProgresoJugador | null>(null)
-  const [confirmarReset,   setConfirmarReset]   = useState(false)
-  const [editandoNombre,   setEditandoNombre]   = useState(false)
-  const [tmpNombre,        setTmpNombre]         = useState('')
-  const [tmpAlias,         setTmpAlias]          = useState('')
+  const [progreso,       setProgreso]       = useState<ProgresoJugador | null>(null)
+  const [pagina,         setPagina]         = useState<PaginaAgente>('perfil')
+  const [confirmarReset, setConfirmarReset] = useState(false)
+  const [editandoNombre, setEditandoNombre] = useState(false)
+  const [tmpNombre,      setTmpNombre]      = useState('')
+  const [tmpAlias,       setTmpAlias]       = useState('')
   const { play } = usePipBoySound()
 
   useEffect(() => { setProgreso(cargarProgreso()) }, [])
@@ -71,22 +80,27 @@ export default function AgentePage() {
     play('transmit')
   }
 
+  function cambiarPagina(p: PaginaAgente) {
+    play('click')
+    setPagina(p)
+  }
+
   if (!progreso) return (
     <PipBoyLayout>
-      <div style={{ padding: 24, color: 'var(--pip-dim)', fontFamily: 'monospace', fontSize: '0.7rem' }}>
+      <div style={{ padding: 24, color: 'var(--pip-dim)', fontFamily: 'monospace' }}>
         CARGANDO EXPEDIENTE...
       </div>
     </PipBoyLayout>
   )
 
-  const totalDesafios     = Object.values(progreso.desafiosCompletados).reduce((a, b) => a + b.length, 0)
+  const totalDesafios      = Object.values(progreso.desafiosCompletados).reduce((a, b) => a + b.length, 0)
   const nivelesCompletados = progreso.nivelesCompletados.length
-  const xpEnRango         = xpEnRangoActual(progreso.xp, progreso.reputacion)
-  const xpTotal           = xpRangoTotal(progreso.reputacion)
-  const xpPct             = Math.min(100, Math.round((xpEnRango / xpTotal) * 100))
-  const rangoActual       = RANGOS.find(r => r.rep === progreso.reputacion) ?? RANGOS[0]
-  const rangoSiguiente    = RANGOS[RANGOS.indexOf(rangoActual) + 1]
-  const totalNiveles      = nivelesData.subniveles.length
+  const xpEnRango          = xpEnRangoActual(progreso.xp, progreso.reputacion)
+  const xpTotal            = xpRangoTotal(progreso.reputacion)
+  const xpPct              = Math.min(100, Math.round((xpEnRango / xpTotal) * 100))
+  const rangoActual        = RANGOS.find(r => r.rep === progreso.reputacion) ?? RANGOS[0]
+  const rangoSiguiente     = RANGOS[RANGOS.indexOf(rangoActual) + 1]
+  const totalNiveles       = nivelesData.subniveles.length
 
   const pctHabilidad = (tipo: string) => {
     const completados = Object.values(progreso.desafiosCompletados)
@@ -98,6 +112,7 @@ export default function AgentePage() {
     <PipBoyLayout>
       <div className={styles.page}>
 
+        {/* HEADER */}
         <div className={styles.sectionHeader}>
           <div className={styles.sectionTitle}>Expediente del Agente</div>
           <div className={styles.badge}>CLASIFICADO</div>
@@ -138,15 +153,29 @@ export default function AgentePage() {
           </div>
         )}
 
-        <div className="grid-2">
+        {/* SUB-PÁGINAS NAV */}
+        <div className={styles.subNav}>
+          {PAGINAS.map(p => (
+            <button
+              key={p.id}
+              className={`${styles.subNavBtn} ${pagina === p.id ? styles.subNavBtnActive : ''}`}
+              onClick={() => cambiarPagina(p.id)}
+            >
+              <span className={styles.subNavIcon}>{p.icon}</span>
+              <span className={styles.subNavLabel}>{p.label}</span>
+            </button>
+          ))}
+        </div>
 
-          {/* TARJETA DE AGENTE */}
-          <div className={`pip-panel ${styles.agentCard}`}>
+        {/* ── PÁGINA: PERFIL ── */}
+        {pagina === 'perfil' && (
+          <div className={`${styles.pageContent} pip-panel`} key="perfil">
             <div className={styles.panelTitleRow}>
-              <div className="panel-title" style={{marginBottom:0}}>PERFIL DEL OPERATIVO</div>
+              <div className="panel-title" style={{ marginBottom: 0 }}>PERFIL DEL OPERATIVO</div>
               <button className={styles.editBtn} onClick={abrirEdicion}>✎ EDITAR</button>
             </div>
 
+            {/* Avatar + info básica */}
             <div className={styles.agentInner}>
               <div className={styles.avatar}>🕵️</div>
               <div className={styles.agentInfo}>
@@ -155,8 +184,6 @@ export default function AgentePage() {
                 <div className={styles.agentRank}>
                   {rangoActual.nombre.toUpperCase()} — {progreso.nivelActual}
                 </div>
-
-                {/* XP BAR dentro del rango */}
                 <div className={styles.xpBlock}>
                   <div className={styles.xpLabel}>
                     <span className="text-muted text-xs">XP EN RANGO</span>
@@ -174,30 +201,26 @@ export default function AgentePage() {
               </div>
             </div>
 
-            {/* MINI STATS */}
+            {/* Mini stats */}
             <div className={styles.statsRow}>
-              <div className={styles.miniStat}>
-                <div className="text-xs text-muted">XP TOTAL</div>
-                <div className={styles.miniStatVal}>{progreso.xp.toLocaleString()}</div>
-              </div>
-              <div className={styles.miniStat}>
-                <div className="text-xs text-muted">NIVELES</div>
-                <div className={styles.miniStatVal}>{nivelesCompletados}/25</div>
-              </div>
-              <div className={styles.miniStat}>
-                <div className="text-xs text-muted">DESAFÍOS</div>
-                <div className={styles.miniStatVal}>{totalDesafios}/100</div>
-              </div>
-              <div className={styles.miniStat}>
-                <div className="text-xs text-muted">RACHA</div>
-                <div className={`${styles.miniStatVal} text-amber`}>{progreso.rachaActual}🔥</div>
-              </div>
+              {[
+                { label: 'XP TOTAL',  val: progreso.xp.toLocaleString(), amber: false },
+                { label: 'NIVELES',   val: `${nivelesCompletados}/25`,    amber: false },
+                { label: 'DESAFÍOS',  val: `${totalDesafios}/100`,        amber: false },
+                { label: 'RACHA',     val: `${progreso.rachaActual}🔥`,   amber: true  },
+              ].map(s => (
+                <div key={s.label} className={styles.miniStat}>
+                  <div className="text-xs text-muted">{s.label}</div>
+                  <div className={`${styles.miniStatVal} ${s.amber ? 'text-amber' : ''}`}>{s.val}</div>
+                </div>
+              ))}
             </div>
 
-            {/* RANGOS */}
+            {/* Rangos */}
             <div className={styles.rangos}>
               {RANGOS.map(r => (
-                <div key={r.rep}
+                <div
+                  key={r.rep}
                   className={`${styles.rangoItem} ${r.rep === progreso.reputacion ? styles.rangoActive : ''}`}
                 >
                   <div className={styles.rangoRep}>{r.rep}</div>
@@ -206,9 +229,9 @@ export default function AgentePage() {
               ))}
             </div>
 
-            {/* SESIONES */}
+            {/* Sesiones */}
             <div className={styles.sesiones}>
-              <span className="text-xs text-muted">SESIONES TOTALES:</span>
+              <span className="text-xs text-muted">SESIONES:</span>
               <span className="text-xs" style={{ marginLeft: 6 }}>{progreso.totalSesiones}</span>
               {progreso.ultimaSesion && (
                 <>
@@ -217,12 +240,31 @@ export default function AgentePage() {
                 </>
               )}
             </div>
-          </div>
 
-          {/* ATRIBUTOS */}
-          <div className="pip-panel">
+            {/* Reset */}
+            <div className={styles.resetZone}>
+              {!confirmarReset ? (
+                <button className="pip-btn danger" onClick={() => { setConfirmarReset(true); play('error') }}>
+                  ⚠ RESETEAR PROGRESO
+                </button>
+              ) : (
+                <div className={styles.resetConfirm}>
+                  <span className="text-red text-xs">¿Borrar todo el progreso? Esta acción es irreversible.</span>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                    <button className="pip-btn danger" onClick={handleReset}>SÍ, BORRAR</button>
+                    <button className="pip-btn" onClick={() => setConfirmarReset(false)}>CANCELAR</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── PÁGINA: ATRIBUTOS ── */}
+        {pagina === 'atributos' && (
+          <div className={`${styles.pageContent} pip-panel`} key="atributos">
             <div className="panel-title">ATRIBUTOS ESPECIALES</div>
-            <div className="text-xs text-muted" style={{ marginBottom: 10, lineHeight: 1.5 }}>
+            <div className="text-xs text-muted" style={{ marginBottom: 14, lineHeight: 1.6 }}>
               Suben automáticamente al completar desafíos de cada habilidad.
             </div>
             {ATRIBUTOS.map(attr => {
@@ -231,79 +273,68 @@ export default function AgentePage() {
                 <div key={attr.key} className={styles.atributo}>
                   <span className={styles.atributoIcon}>{attr.icon}</span>
                   <span className={styles.atributoLabel}>{attr.label}</span>
-                  <div className={styles.dots}>
-                    {Array.from({ length: 10 }, (_, i) => (
-                      <div key={i} className={`${styles.dot} ${i < val ? styles.dotFilled : ''}`} />
-                    ))}
-                  </div>
-                  <span className={styles.atributoVal}>{val}/10</span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* COMPETENCIAS */}
-        <div className="pip-panel">
-          <div className="panel-title">COMPETENCIAS LINGÜÍSTICAS — MARCO CERVANTES</div>
-          <div className={styles.habilidadesGrid}>
-            {HABILIDADES.map(h => {
-              const pct = pctHabilidad(h.key)
-              return (
-                <div key={h.key} className={styles.habilidad}>
-                  <div className={styles.habilidadHeader}>
-                    <span>{h.label}</span>
-                    <span className="text-xs">{pct}%</span>
-                  </div>
-                  <div className="stat-bar-track">
-                    <div className={`stat-bar-fill ${h.barClass}`} style={{ width: `${pct}%` }} />
+                  <div className={styles.dotsWrap}>
+                    <div className={styles.dots}>
+                      {Array.from({ length: 10 }, (_, i) => (
+                        <div key={i} className={`${styles.dot} ${i < val ? styles.dotFilled : ''}`} />
+                      ))}
+                    </div>
+                    <span className={styles.atributoVal}>{val}/10</span>
                   </div>
                 </div>
               )
             })}
-          </div>
-        </div>
 
-        {/* HISTORIAL */}
-        <div className="pip-panel">
-          <div className="panel-title">HISTORIAL DE OPERACIONES</div>
-          {progreso.nivelesCompletados.length === 0 ? (
-            <div className="text-muted text-xs" style={{ padding: '8px 0' }}>
-              Sin operaciones completadas aún. Inicia tu primera misión.
+            {/* Historial de operaciones */}
+            <div style={{ marginTop: 20 }}>
+              <div className="panel-title">HISTORIAL DE OPERACIONES</div>
+              {progreso.nivelesCompletados.length === 0 ? (
+                <div className="text-muted text-xs" style={{ padding: '8px 0' }}>
+                  Sin operaciones completadas aún.
+                </div>
+              ) : (
+                <div className={styles.historialGrid}>
+                  {progreso.nivelesCompletados.map(id => {
+                    const sn = (nivelesData.subniveles as Subnivel[]).find(s => s.id === id)
+                    return (
+                      <div key={id} className={styles.historialItem}>
+                        <span className={styles.historialId}>{id}</span>
+                        <span className={styles.historialNombre}>{sn?.nombre ?? id}</span>
+                        <span className={styles.historialCheck}>✓✓✓✓</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
-          ) : (
-            <div className={styles.historialGrid}>
-              {progreso.nivelesCompletados.map(id => {
-                const sn = (nivelesData.subniveles as Subnivel[]).find(s => s.id === id)
+          </div>
+        )}
+
+        {/* ── PÁGINA: COMPETENCIAS ── */}
+        {pagina === 'competencias' && (
+          <div className={`${styles.pageContent} pip-panel`} key="competencias">
+            <div className="panel-title">COMPETENCIAS LINGÜÍSTICAS — MARCO CERVANTES</div>
+            <div className="text-xs text-muted" style={{ marginBottom: 14, lineHeight: 1.6 }}>
+              Progreso por destreza en los 25 niveles A1–B2.
+            </div>
+            <div className={styles.habilidadesGrid}>
+              {HABILIDADES.map(h => {
+                const pct = pctHabilidad(h.key)
                 return (
-                  <div key={id} className={styles.historialItem}>
-                    <span className={styles.historialId}>{id}</span>
-                    <span className={styles.historialNombre}>{sn?.nombre ?? id}</span>
-                    <span className={styles.historialCheck}>✓✓✓✓</span>
+                  <div key={h.key} className={styles.habilidad}>
+                    <div className={styles.habilidadHeader}>
+                      <span>{h.label}</span>
+                      <span className="text-xs">{pct}%</span>
+                    </div>
+                    <div className="stat-bar-track">
+                      <div className={`stat-bar-fill ${h.barClass}`} style={{ width: `${pct}%` }} />
+                    </div>
                   </div>
                 )
               })}
             </div>
-          )}
-        </div>
-
-        {/* RESET */}
-        <div className={styles.resetZone}>
-          {!confirmarReset ? (
-            <button className="pip-btn danger" style={{ fontSize: '0.55rem' }}
-              onClick={() => { setConfirmarReset(true); play('error') }}>
-              ⚠ RESETEAR PROGRESO
-            </button>
-          ) : (
-            <div className={styles.resetConfirm}>
-              <span className="text-red text-xs">¿Borrar todo el progreso? Esta acción es irreversible.</span>
-              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                <button className="pip-btn danger" style={{ fontSize: '0.55rem' }} onClick={handleReset}>SÍ, BORRAR</button>
-                <button className="pip-btn" style={{ fontSize: '0.55rem' }} onClick={() => setConfirmarReset(false)}>CANCELAR</button>
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
       </div>
     </PipBoyLayout>

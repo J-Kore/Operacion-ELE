@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generarContenidoDesafio } from '@/lib/ai'
-import { Subnivel, HabilidadType, ContenidoAuditivo } from '@/lib/types'
+import { Subnivel, HabilidadType } from '@/lib/types'
 
 export const maxDuration = 90
 
@@ -10,16 +10,8 @@ export async function POST(req: NextRequest) {
       subnivel: Subnivel
       habilidad: HabilidadType
     }
-    const resultado = await generarContenidoDesafio(subnivel, habilidad)
-
-    // Para auditiva devolvemos el objeto estructurado completo.
-    // Para el resto devolvemos { contenido: string } como antes
-    // para no romper el flujo del ChatChallenge en otras habilidades.
-    if (habilidad === 'auditiva') {
-      return NextResponse.json(resultado as ContenidoAuditivo)
-    }
-    return NextResponse.json({ contenido: resultado as string })
-
+    const contenido = await generarContenidoDesafio(subnivel, habilidad)
+    return NextResponse.json({ contenido })
   } catch (error) {
     console.error('[/api/generar-contenido] Error:', error)
     return NextResponse.json({

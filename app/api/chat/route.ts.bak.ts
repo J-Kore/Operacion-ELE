@@ -1,23 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generarRespuestaNPC, evaluarRespuesta } from '@/lib/ai'
-import { Subnivel, HabilidadType, MensajeChat, PreguntaAuditiva } from '@/lib/types'
+import { Subnivel, HabilidadType, MensajeChat } from '@/lib/types'
 
 export const maxDuration = 90
 
 export async function POST(req: NextRequest) {
   try {
-    const { subnivel, habilidad, historial, mensaje, intento, contextAuditivo } = await req.json() as {
+    const { subnivel, habilidad, historial, mensaje, intento } = await req.json() as {
       subnivel: Subnivel
       habilidad: HabilidadType
       historial: MensajeChat[]
       mensaje: string
       intento: number
-      // Solo presente en auditiva: las preguntas con sus respuestas esperadas
-      contextAuditivo?: { preguntas: PreguntaAuditiva[] } | null
     }
 
     const [evaluacion, respuestaNPC] = await Promise.all([
-      evaluarRespuesta(subnivel, mensaje, intento, contextAuditivo ?? null),
+      evaluarRespuesta(subnivel, mensaje, intento),
       generarRespuestaNPC(subnivel, habilidad, historial, mensaje),
     ])
 

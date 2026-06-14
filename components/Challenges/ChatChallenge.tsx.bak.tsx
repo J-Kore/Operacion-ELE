@@ -1,8 +1,7 @@
 'use client'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Subnivel, HabilidadType, MensajeChat, ContenidoAuditivo, PreguntaAuditiva } from '@/lib/types'
+import { Subnivel, HabilidadType, MensajeChat } from '@/lib/types'
 import { usePipBoySound } from '@/hooks/usePipBoySound'
-import AudioLogPlayer from './AudioLogPlayer'
 import styles from './ChatChallenge.module.css'
 
 // ── Eliminamos la importación de HFStatus (era de huggingface.ts, ya no existe)
@@ -18,7 +17,7 @@ const HABILIDAD_CONFIG = {
   oral:     { icon: '📡', color: 'amber',  label: 'EXPRESIÓN ORAL',       canal: 'Canal de Voz α-7',         instruccion: 'Pulsa el micrófono y habla en español. El sistema transcribirá tu voz automáticamente.' },
   escrita:  { icon: '⌨️', color: 'cyan',   label: 'EXPRESIÓN ESCRITA',    canal: 'Terminal de Mensajería',   instruccion: 'Escribe tu respuesta en español. Puedes tomarte más tiempo para revisar antes de enviar.' },
   lectora:  { icon: '📄', color: 'purple', label: 'COMPRENSIÓN LECTORA',  canal: 'Inventario de Pistas',     instruccion: 'Lee el texto con atención y responde las preguntas de comprensión en español.' },
-  auditiva: { icon: '🎧', color: 'green',  label: 'COMPRENSIÓN AUDITIVA', canal: 'Audio Log Interceptado',   instruccion: 'Escucha la transmisión interceptada y responde las preguntas de comprensión. Puedes repetir el audio las veces que necesites.' },
+  auditiva: { icon: '🎧', color: 'green',  label: 'COMPRENSIÓN AUDITIVA', canal: 'Audio Log Interceptado',   instruccion: 'Lee la transcripción de radio (con [ESTÁTICA]) e infiere lo que falta. Responde las preguntas.' },
 }
 
 
@@ -81,79 +80,6 @@ function OnboardingTooltip({ habilidad, onClose }: { habilidad: HabilidadType; o
 // COMPONENTE PRINCIPAL
 // ────────────────────────────────────────────────────────────────────────────
 
-// ── PreguntasAcordeon ────────────────────────────────────────────────────────
-// Subcomponente local: panel de preguntas desplegable.
-// Oculto por defecto para minimizar scroll — el estudiante lo abre si quiere
-// leer las preguntas antes o durante la escucha.
-function PreguntasAcordeon({ preguntas }: { preguntas: PreguntaAuditiva[] }) {
-  const [abierto, setAbierto] = useState(false)
-  return (
-    <div className={styles.preguntasAcordeon}>
-      <button
-        className={styles.preguntasAcordeonBtn}
-        onClick={() => setAbierto(v => !v)}
-        aria-expanded={abierto}
-      >
-        <span>⊞ PREGUNTAS DE COMPRENSIÓN — {preguntas.length} ÍTEMS</span>
-        <span className={`${styles.acordeonArrow} ${abierto ? styles.acordeonArrowOpen : ''}`}>
-          ▸
-        </span>
-      </button>
-      {abierto && (
-        <div className={styles.preguntasBody}>
-          <ol className={styles.preguntasList}>
-            {preguntas.map(p => (
-              <li key={p.id} className={styles.preguntaItem}>
-                <span className={styles.preguntaNum}>{p.id}.</span>
-                <span className={styles.preguntaTexto}>{p.pregunta}</span>
-              </li>
-            ))}
-          </ol>
-          <div className={styles.preguntasHint}>
-            Responde todas las preguntas juntas en el terminal de abajo.
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ── InventarioAcordeon ───────────────────────────────────────────────────────
-function InventarioAcordeon({ subnivel }: { subnivel: Subnivel }) {
-  const [abierto, setAbierto] = useState(false)
-  return (
-    <div className={styles.preguntasAcordeon}>
-      <button
-        className={styles.preguntasAcordeonBtn}
-        onClick={() => setAbierto(v => !v)}
-        aria-expanded={abierto}
-      >
-        <span>⊞ INVENTARIO LINGÜÍSTICO</span>
-        <span className={`${styles.acordeonArrow} ${abierto ? styles.acordeonArrowOpen : ''}`}>▸</span>
-      </button>
-      {abierto && (
-        <div className={styles.preguntasBody}>
-          <div className={styles.invGrid}>
-            <div>
-              <div className={styles.invLabel}>VERBOS CLAVE</div>
-              <div className={styles.invList}>
-                {subnivel.verbos.slice(0, 6).map(v => <span key={v} className={styles.invTag}>{v}</span>)}
-              </div>
-            </div>
-            <div>
-              <div className={styles.invLabel}>VOCABULARIO</div>
-              <div className={styles.invList}>
-                {subnivel.vocabulario.slice(0, 6).map(v => <span key={v} className={styles.invTag}>{v}</span>)}
-              </div>
-            </div>
-          </div>
-          <div className={styles.invProhibido}>⚠ {subnivel.gramaticaProhibida}</div>
-        </div>
-      )}
-    </div>
-  )
-}
-
 export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMision }: Props) {
   const { play } = usePipBoySound()
 
@@ -170,14 +96,6 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
   const [showOnboarding, setShowOnboarding]   = useState(false)
   const [apiMsg, setApiMsg]                   = useState('')
 
-  // ── Estado específico de comprensión auditiva ──
-  // El guion va al reproductor; las preguntas se muestran en el Pip-Boy.
-  // Las preguntas también viajan al evaluador como contexto de corrección.
-  const [guionAudio,   setGuionAudio]   = useState<string>('')
-  const [preguntas,    setPreguntas]    = useState<PreguntaAuditiva[]>([])
-  // Header del desafío: desplegable, cerrado por defecto para minimizar scroll
-  const [headerAbierto, setHeaderAbierto] = useState(false)
-
   // ── Estado del micrófono (solo para habilidad oral) ──
   // 'idle'        → sin grabar, botón disponible
   // 'recording'   → grabando, animación activa
@@ -192,7 +110,6 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
 
   const cfg = HABILIDAD_CONFIG[habilidad]
   const esOral = habilidad === 'oral'
-  const esAuditiva = habilidad === 'auditiva'
 
   // ── Detectar soporte de Web Speech API al montar ──
   useEffect(() => {
@@ -242,19 +159,7 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
           body: JSON.stringify({ subnivel, habilidad }),
         })
         const data = await res.json()
-
-        if (habilidad === 'auditiva') {
-          // La respuesta es un ContenidoAuditivo estructurado.
-          // El guionAudio va al reproductor; las preguntas al panel Pip-Boy.
-          // El terminal empieza vacío — el estudiante escucha primero.
-          const contenido = data as ContenidoAuditivo
-          setGuionAudio(contenido.guionAudio ?? '')
-          setPreguntas(contenido.preguntas ?? [])
-          setMensajes([]) // terminal limpio hasta que el agente responda
-        } else {
-          // Resto de habilidades: texto plano al terminal como antes
-          setMensajes([{ role: 'assistant', content: data.contenido }])
-        }
+        setMensajes([{ role: 'assistant', content: data.contenido }])
       } catch {
         setMensajes([{
           role: 'assistant',
@@ -390,12 +295,6 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
           historial: mensajes,
           mensaje: userMsg,
           intento,
-          // Para auditiva: el evaluador necesita las preguntas y sus respuestas
-          // esperadas para verificar que la información es correcta, no solo
-          // que la gramática está bien.
-          contextAuditivo: habilidad === 'auditiva' && preguntas.length > 0
-            ? { preguntas }
-            : null,
         }),
       })
       const data = await res.json()
@@ -456,37 +355,18 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
 
       {!showOnboarding && (
         <>
-          {/* HEADER DEL DESAFÍO — acordeón desplegable */}
-          <div className={styles.headerAcordeon}>
-            {/* Barra de título: siempre visible, actúa como toggle */}
-            <button
-              className={styles.headerToggle}
-              onClick={() => setHeaderAbierto(v => !v)}
-              aria-expanded={headerAbierto}
-            >
-              <span className={styles.headerToggleLeft}>
-                <span className={styles.headerIcon}>{cfg.icon}</span>
-                <span className={styles.headerCanal}>{cfg.canal}</span>
-                {completado && <span className={styles.completadoBadge}>✓</span>}
-              </span>
-              <span className={styles.headerToggleRight}>
-                {!completado && (
-                  <button
-                    className={styles.helpBtn}
-                    title="¿Cómo funciona?"
-                    onClick={e => { e.stopPropagation(); setShowOnboarding(true) }}
-                  >?</button>
-                )}
-                <span className={`${styles.headerArrow} ${headerAbierto ? styles.headerArrowOpen : ''}`}>▸</span>
-              </span>
-            </button>
-            {/* Cuerpo: tipo y descripción, visibles solo al desplegar */}
-            {headerAbierto && (
-              <div className={styles.headerBody}>
-                <div className={`${styles.headerType} text-xs text-muted`}>{cfg.label}</div>
-                <div className={styles.headerDesc}>{subnivel.desafios[habilidad].descripcion}</div>
-              </div>
-            )}
+          {/* HEADER */}
+          <div className={`${styles.header} pip-panel`}>
+            <span className={styles.headerIcon}>{cfg.icon}</span>
+            <div className={styles.headerBody}>
+              <div className={`${styles.headerType} text-xs text-muted`}>{cfg.label}</div>
+              <div className={`${styles.headerCanal} orbitron`}>{cfg.canal}</div>
+              <div className={styles.headerDesc}>{subnivel.desafios[habilidad].descripcion}</div>
+            </div>
+            {completado
+              ? <div className={styles.completadoBadge}>✓ COMPLETADO</div>
+              : <button className={styles.helpBtn} title="¿Cómo funciona?" onClick={() => setShowOnboarding(true)}>?</button>
+            }
           </div>
 
           {/* MENSAJES DE ESTADO (conexión, errores de mic...) */}
@@ -497,31 +377,55 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
             </div>
           )}
 
-          {/* REPRODUCTOR DE AUDIO LOG — solo en comprensión auditiva.
-              El guion se escucha aquí; el terminal de abajo omite ese primer
-              mensaje para no convertir la audición en lectura. */}
-          {esAuditiva && guionAudio && (
-            <AudioLogPlayer
-              texto={guionAudio}
-              macro={subnivel.macro}
-              onPlayClick={() => play('transmit')}
-            />
+          {/* TERMINAL DE MENSAJES */}
+          <div className={`terminal ${styles.terminal}`} ref={terminalRef}>
+            {mensajes.map((m, i) => (
+              <div
+                key={i}
+                className={`${styles.mensaje} ${m.role === 'user' ? styles.user : styles.npc}`}
+              >
+                <span className={styles.roleLabel}>{m.role === 'user' ? 'AGT >' : 'NPC >'}</span>
+                <span className={styles.content}>{m.content}</span>
+              </div>
+            ))}
+            {cargando && (
+              <div className={`${styles.mensaje} ${styles.npc}`}>
+                <span className={styles.roleLabel}>NPC &gt;</span>
+                <span className={styles.content}><span className="terminal-cursor" /></span>
+              </div>
+            )}
+          </div>
+
+          {/* FEEDBACK TÉCNICO PIP-BOY */}
+          {feedbackTecnico && (
+            <div className={`${styles.pipFeedback} ${capa === 3 ? styles.capa3 : styles.capa2}`}>
+              <div className={styles.pipFeedbackTitle}>
+                {capa === 3 ? '⚠ PIP-BOY — RECALIBRACIÓN' : '⚠ PIP-BOY — SOPORTE TÉCNICO'}
+              </div>
+              <pre className={styles.pipFeedbackText}>{feedbackTecnico}</pre>
+            </div>
           )}
 
-          {/* PREGUNTAS DE COMPRENSIÓN — acordeón desplegable, oculto por defecto.
-              El estudiante lo abre cuando quiere saber qué se le va a preguntar,
-              sin que ocupe espacio si prefiere escuchar primero sin guía. */}
-          {esAuditiva && preguntas.length > 0 && (
-            <PreguntasAcordeon preguntas={preguntas} />
+          {/* INDICADOR DE INTENTO / CAPA */}
+          {intento > 1 && !completado && (
+            <div className={styles.intentoIndicador}>
+              <span className="text-muted text-xs">
+                INTENTO {intento} — CAPA {capa}: {capa === 1 ? 'INMERSIÓN' : capa === 2 ? 'SOPORTE PIP-BOY' : 'RECALIBRACIÓN'}
+              </span>
+              <div className={styles.intentoDots}>
+                {[1, 2, 3].map(n => (
+                  <div
+                    key={n}
+                    className={`${styles.intentoDot} ${intento >= n ? styles.intentoDotActive : ''} ${capa === n ? styles.intentoDotCurrent : ''}`}
+                  />
+                ))}
+              </div>
+            </div>
           )}
-
-          {/* INVENTARIO LINGÜÍSTICO — entre preguntas e input */}
-          <InventarioAcordeon subnivel={subnivel} />
 
           {/* ── ÁREA DE INPUT ──
-              Justo debajo del terminal, antes que el feedback Pip-Boy.
-              Para habilidad ORAL: micrófono + textarea + botón transmitir.
-              Para el resto: solo textarea + botón transmitir.
+              Para habilidad ORAL: micrófono + textarea + botón transmitir
+              Para el resto: solo textarea + botón transmitir
           ── */}
           {!completado ? (
             <div className={styles.inputArea}>
@@ -582,54 +486,6 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
               <span className="text-amber orbitron" style={{ fontSize: 'var(--text-sm)', letterSpacing: '0.2em' }}>
                 ✓ DESAFÍO SUPERADO — +{xpGanado} XP
               </span>
-            </div>
-          )}
-
-          {/* TERMINAL DE MENSAJES — al fondo */}
-          <div className={`terminal ${styles.terminal}`} ref={terminalRef}>
-            {mensajes.map((m, i) => (
-              <div
-                key={i}
-                className={`${styles.mensaje} ${m.role === 'user' ? styles.user : styles.npc}`}
-              >
-                <span className={styles.roleLabel}>{m.role === 'user' ? 'AGT >' : 'NPC >'}</span>
-                <span className={styles.content}>{m.content}</span>
-              </div>
-            ))}
-            {cargando && (
-              <div className={`${styles.mensaje} ${styles.npc}`}>
-                <span className={styles.roleLabel}>NPC &gt;</span>
-                <span className={styles.content}><span className="terminal-cursor" /></span>
-              </div>
-            )}
-          </div>
-
-          {/* FEEDBACK TÉCNICO PIP-BOY — al fondo, después del input.
-              Es información de diagnóstico, no de acción: el estudiante
-              la consulta tras escribir, no antes. */}
-          {feedbackTecnico && (
-            <div className={`${styles.pipFeedback} ${capa === 3 ? styles.capa3 : styles.capa2}`}>
-              <div className={styles.pipFeedbackTitle}>
-                {capa === 3 ? '⚠ PIP-BOY — RECALIBRACIÓN' : '⚠ PIP-BOY — SOPORTE TÉCNICO'}
-              </div>
-              <pre className={styles.pipFeedbackText}>{feedbackTecnico}</pre>
-            </div>
-          )}
-
-          {/* INDICADOR DE INTENTO / CAPA — también al fondo, contexto de estado */}
-          {intento > 1 && !completado && (
-            <div className={styles.intentoIndicador}>
-              <span className="text-muted text-xs">
-                INTENTO {intento} — CAPA {capa}: {capa === 1 ? 'INMERSIÓN' : capa === 2 ? 'SOPORTE PIP-BOY' : 'RECALIBRACIÓN'}
-              </span>
-              <div className={styles.intentoDots}>
-                {[1, 2, 3].map(n => (
-                  <div
-                    key={n}
-                    className={`${styles.intentoDot} ${intento >= n ? styles.intentoDotActive : ''} ${capa === n ? styles.intentoDotCurrent : ''}`}
-                  />
-                ))}
-              </div>
             </div>
           )}
 

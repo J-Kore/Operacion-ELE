@@ -61,36 +61,6 @@ export interface ProgresoJugador {
 
 export type HabilidadType = 'oral' | 'escrita' | 'lectora' | 'auditiva'
 
-// ── Tipos para la comprensión auditiva estructurada ──
-
-/** Datos de un agente generado para el audio log */
-export interface AgenteAudio {
-  nombre: string
-  ciudad: string
-  origen: string      // país de origen ("México", "Francia"…)
-  codigo: string      // código alfanumérico 4 chars, ej. "A3B7"
-}
-
-/** Una pregunta de comprensión sobre un agente del audio log */
-export interface PreguntaAuditiva {
-  id: number
-  agente: string            // nombre del agente al que se refiere
-  dato: 'nombre' | 'ciudad' | 'origen' | 'codigo'
-  pregunta: string          // texto de la pregunta que ve el estudiante
-  respuestaEsperada: string // dato exacto del audio (para el evaluador)
-}
-
-/**
- * Contenido estructurado que devuelve /api/generar-contenido
- * cuando habilidad === 'auditiva'.
- * El guionAudio se convierte en voz; las preguntas se muestran en pantalla.
- */
-export interface ContenidoAuditivo {
-  guionAudio: string
-  preguntas: PreguntaAuditiva[]
-  agentes: AgenteAudio[]
-}
-
 export interface MensajeChat {
   role: 'user' | 'assistant'
   content: string

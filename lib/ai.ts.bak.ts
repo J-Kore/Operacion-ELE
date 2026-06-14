@@ -12,7 +12,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Anthropic from '@anthropic-ai/sdk'
-import { Subnivel, HabilidadType, MensajeChat, EvaluacionRespuesta, ContenidoAuditivo } from './types'
+import { Subnivel, HabilidadType, MensajeChat, EvaluacionRespuesta } from './types'
 
 // Cliente Anthropic — lee la clave desde .env.local automáticamente
 // (el SDK busca process.env.ANTHROPIC_API_KEY por defecto)
@@ -23,10 +23,9 @@ const anthropic = new Anthropic()
 const MODEL = 'claude-sonnet-4-6'
 
 // Tokens máximos por tipo de llamada
-const MAX_TOKENS_NPC       = 400   // respuesta narrativa del NPC: concisa
-const MAX_TOKENS_EVAL      = 600   // evaluación: necesita JSON estructurado
-const MAX_TOKENS_CONTENIDO = 800   // generación de contenido inicial: más largo
-const MAX_TOKENS_AUDITIVA  = 1200  // auditiva: 4 agentes + guion + 8 preguntas en JSON
+const MAX_TOKENS_NPC      = 400   // respuesta narrativa del NPC: concisa
+const MAX_TOKENS_EVAL     = 600   // evaluación: necesita JSON estructurado
+const MAX_TOKENS_CONTENIDO = 800  // generación de contenido inicial: más largo
 
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -74,37 +73,15 @@ IMPORTANTE: El NPC habla siempre en español correcto y natural. Nunca usa estru
 function buildEvaluationPrompt(
   subnivel: Subnivel,
   respuestaUsuario: string,
-  intentoNumero: number,
-  contextAuditivo?: { preguntas: { pregunta: string; respuestaEsperada: string; agente: string }[] } | null
+  intentoNumero: number
 ): string {
-  // Bloque extra solo para comprensión auditiva: las preguntas con sus
-  // respuestas correctas dan al evaluador la fuente de verdad para verificar
-  // que el estudiante dio la información correcta, no solo gramática correcta.
-  const bloqueAuditivo = contextAuditivo?.preguntas?.length
-    ? `
-CONTEXTO DE COMPRENSIÓN AUDITIVA:
-El estudiante escuchó un audio con 4 agentes y debe responder estas preguntas.
-Las respuestas correctas son:
-${contextAuditivo.preguntas.map((p, i) =>
-  `${i + 1}. "${p.pregunta}" → respuesta esperada: "${p.respuestaEsperada}" (agente: ${p.agente})`
-).join('\n')}
-
-CRITERIO DE ÉXITO (deben cumplirse los dos):
-1. INFORMACIÓN CORRECTA: el estudiante proporciona los datos correctos de los agentes.
-   Acepta variaciones naturales: "es de México" = "Soy de México", mayúsculas indiferentes.
-   No aceptes datos inventados o de otro agente.
-2. GRAMÁTICA CORRECTA: frases gramaticalmente válidas en nivel ${subnivel.id}.
-   Errores menores con información correcta → capa 2, no exito=false.
-   Información incorrecta → exito=false independientemente de la gramática.`
-    : ''
-
   return `Analiza esta respuesta del agente en español nivel ${subnivel.id}.
 
 RESPUESTA DEL AGENTE: "${respuestaUsuario}"
 
 ERRORES CRÍTICOS A EVALUAR:
 ${subnivel.erroresCriticos.map((e, i) => `${i + 1}. ${e}`).join('\n')}
-${bloqueAuditivo}
+
 INTENTO NÚMERO: ${intentoNumero}
 
 Responde SOLO con un JSON válido con esta estructura exacta (sin texto adicional, sin markdown):
@@ -164,90 +141,8 @@ async function callClaude(
 export async function generarContenidoDesafio(
   subnivel: Subnivel,
   habilidad: HabilidadType
-): Promise<string | ContenidoAuditivo> {
+): Promise<string> {
   const desafio = subnivel.desafios[habilidad]
-
-  // ── RAMA AUDITIVA: genera JSON estructurado en una sola llamada ──
-  // Un único prompt genera los 4 agentes, el guion y las 8 preguntas.
-  // Usar una sola llamada garantiza coherencia: los datos del guion
-  // y los de las preguntas salen de la misma fuente de verdad.
-  if (habilidad === 'auditiva') {
-    const systemPrompt = `Eres el generador de contenido del juego Operación ELE.
-Tu tarea es generar en UNA SOLA respuesta JSON el material completo para un ejercicio
-de comprensión auditiva de nivel ${subnivel.macro}.
-Responde ÚNICAMENTE con el JSON. Sin texto adicional, sin bloques markdown, sin explicaciones.`
-
-    const userMessage = `Genera el siguiente objeto JSON para el subnivel ${subnivel.id} (${subnivel.nombre}).
-
-VOCABULARIO PERMITIDO: ${subnivel.vocabulario.join(', ')}
-VERBOS: ${subnivel.verbos.join(', ')}
-
-INSTRUCCIONES:
-1. Crea 4 agentes ficticios con datos variados y realistas (nombres hispanos, europeos y latinoamericanos mezclados, ciudades reales, países reales, códigos alfanuméricos distintos formato LetraNúmeroLetraNúmero).
-2. Escribe el guionAudio: el Agente 1 habla en primera persona (máx. 3 frases), luego presenta a los otros tres en tercera persona ("Este es el agente X...", máx. 1 frase por agente presentado). Total máx. 6 frases cortas y simples, nivel A1.
-3. Genera 8 preguntas: exactamente 2 por agente. Cada par de preguntas debe cubrir 2 datos DISTINTOS de ese agente (de entre: nombre, ciudad, origen, codigo). Elige los datos al azar pero sin repetir datos dentro del mismo par.
-4. Las preguntas deben estar redactadas en español A1 simple ("¿Cómo se llama...?", "¿De dónde es...?", "¿En qué ciudad vive...?", "¿Cuál es el código de...?").
-5. La respuestaEsperada debe ser el dato exacto y mínimo ("Ana Torres", "Madrid", "México", "A3B7").
-
-Devuelve exactamente este JSON (sin variaciones en los nombres de campo):
-{
-  "agentes": [
-    { "nombre": "string", "ciudad": "string", "origen": "string", "codigo": "string" },
-    { "nombre": "string", "ciudad": "string", "origen": "string", "codigo": "string" },
-    { "nombre": "string", "ciudad": "string", "origen": "string", "codigo": "string" },
-    { "nombre": "string", "ciudad": "string", "origen": "string", "codigo": "string" }
-  ],
-  "guionAudio": "string",
-  "preguntas": [
-    { "id": 1, "agente": "string", "dato": "nombre|ciudad|origen|codigo", "pregunta": "string", "respuestaEsperada": "string" },
-    { "id": 2, "agente": "string", "dato": "nombre|ciudad|origen|codigo", "pregunta": "string", "respuestaEsperada": "string" },
-    { "id": 3, "agente": "string", "dato": "nombre|ciudad|origen|codigo", "pregunta": "string", "respuestaEsperada": "string" },
-    { "id": 4, "agente": "string", "dato": "nombre|ciudad|origen|codigo", "pregunta": "string", "respuestaEsperada": "string" },
-    { "id": 5, "agente": "string", "dato": "nombre|ciudad|origen|codigo", "pregunta": "string", "respuestaEsperada": "string" },
-    { "id": 6, "agente": "string", "dato": "nombre|ciudad|origen|codigo", "pregunta": "string", "respuestaEsperada": "string" },
-    { "id": 7, "agente": "string", "dato": "nombre|ciudad|origen|codigo", "pregunta": "string", "respuestaEsperada": "string" },
-    { "id": 8, "agente": "string", "dato": "nombre|ciudad|origen|codigo", "pregunta": "string", "respuestaEsperada": "string" }
-  ]
-}`
-
-    try {
-      const raw = await callClaude(
-        systemPrompt,
-        [{ role: 'user', content: userMessage }],
-        MAX_TOKENS_AUDITIVA
-      )
-      // Limpiamos posibles bloques ```json ``` que el modelo añada
-      const clean = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
-      const jsonMatch = clean.match(/\{[\s\S]*\}/)
-      if (!jsonMatch) throw new Error('JSON auditivo no encontrado en respuesta')
-      return JSON.parse(jsonMatch[0]) as ContenidoAuditivo
-    } catch (error) {
-      console.error('[ai] generarContenidoDesafio auditiva error:', error)
-      // Fallback mínimo: contenido de emergencia si la IA falla
-      return {
-        guionAudio: 'Me llamo Marco Torres. Vivo en Madrid. Soy de España. Mi código es A3B7. Este es el agente Luis Pérez, de Buenos Aires, Argentina, código B2C4. Esta es la agente Yuki Sato, de Barcelona, Japón, código D5E6. Por último, el agente Paul Dupont, de París, Francia, código F7G8.',
-        agentes: [
-          { nombre: 'Marco Torres', ciudad: 'Madrid',       origen: 'España',     codigo: 'A3B7' },
-          { nombre: 'Luis Pérez',   ciudad: 'Buenos Aires', origen: 'Argentina',  codigo: 'B2C4' },
-          { nombre: 'Yuki Sato',    ciudad: 'Barcelona',    origen: 'Japón',      codigo: 'D5E6' },
-          { nombre: 'Paul Dupont',  ciudad: 'París',        origen: 'Francia',    codigo: 'F7G8' },
-        ],
-        preguntas: [
-          { id: 1, agente: 'Marco Torres', dato: 'nombre',  pregunta: '¿Cómo se llama el primer agente?',             respuestaEsperada: 'Marco Torres'  },
-          { id: 2, agente: 'Marco Torres', dato: 'ciudad',  pregunta: '¿En qué ciudad vive el primer agente?',        respuestaEsperada: 'Madrid'        },
-          { id: 3, agente: 'Luis Pérez',   dato: 'origen',  pregunta: '¿De dónde es Luis Pérez?',                     respuestaEsperada: 'Argentina'     },
-          { id: 4, agente: 'Luis Pérez',   dato: 'codigo',  pregunta: '¿Cuál es el código del agente Luis Pérez?',    respuestaEsperada: 'B2C4'          },
-          { id: 5, agente: 'Yuki Sato',    dato: 'nombre',  pregunta: '¿Cómo se llama la tercera agente?',            respuestaEsperada: 'Yuki Sato'     },
-          { id: 6, agente: 'Yuki Sato',    dato: 'origen',  pregunta: '¿De dónde es la agente Yuki Sato?',            respuestaEsperada: 'Japón'         },
-          { id: 7, agente: 'Paul Dupont',  dato: 'ciudad',  pregunta: '¿En qué ciudad vive Paul Dupont?',             respuestaEsperada: 'París'         },
-          { id: 8, agente: 'Paul Dupont',  dato: 'codigo',  pregunta: '¿Cuál es el código del agente Paul Dupont?',   respuestaEsperada: 'F7G8'          },
-        ],
-      } satisfies ContenidoAuditivo
-    }
-  }
-
-  // ── RESTO DE HABILIDADES: texto plano como antes ──
-  const instruccionesHabilidad = ''
 
   const systemPrompt = `Eres el generador de contenido del juego Operación ELE.
 Genera el mensaje inicial del NPC para arrancar el desafío.
@@ -255,16 +150,19 @@ Vocabulario a usar: ${subnivel.vocabulario.join(', ')}
 Verbos: ${subnivel.verbos.join(', ')}
 Solo el contenido narrativo, sin explicaciones ni metadatos.
 Responde en español con tono de espionaje retro-futurista.
-Formato: texto plano únicamente, sin markdown, sin asteriscos, sin emojis.${instruccionesHabilidad}`
+Formato: texto plano únicamente, sin markdown, sin asteriscos, sin emojis.`
+
+  const userMessage = desafio.prompt
 
   try {
     return await callClaude(
       systemPrompt,
-      [{ role: 'user', content: desafio.prompt }],
+      [{ role: 'user', content: userMessage }],
       MAX_TOKENS_CONTENIDO
     )
   } catch (error) {
     console.error('[ai] generarContenidoDesafio error:', error)
+    // Fallback narrativo — la misión puede continuar aunque falle la generación
     return '[SEÑAL DÉBIL] Agente, la transmisión tiene interferencias. El objetivo te espera. Identifícate y reporta tu estado.'
   }
 }
@@ -303,14 +201,13 @@ export async function generarRespuestaNPC(
 export async function evaluarRespuesta(
   subnivel: Subnivel,
   respuestaUsuario: string,
-  intentoNumero: number,
-  contextAuditivo?: { preguntas: { pregunta: string; respuestaEsperada: string; agente: string }[] } | null
+  intentoNumero: number
 ): Promise<EvaluacionRespuesta> {
   const systemPrompt = `Eres un evaluador experto de español como lengua extranjera.
 Sigues el Plan Curricular del Instituto Cervantes (PCIC).
-Responde ÚNICAMENTE con JSON válido, sin texto adicional, sin bloques markdown.`
+Respondes ÚNICAMENTE con JSON válido, sin texto adicional, sin bloques markdown.`
 
-  const userMessage = buildEvaluationPrompt(subnivel, respuestaUsuario, intentoNumero, contextAuditivo)
+  const userMessage = buildEvaluationPrompt(subnivel, respuestaUsuario, intentoNumero)
 
   try {
     const raw = await callClaude(

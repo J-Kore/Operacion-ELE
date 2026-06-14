@@ -90,6 +90,7 @@ export default function MisionPage() {
     </PipBoyLayout>
   )
 
+  const esAuditiva = habilidad === 'auditiva'
 
   return (
     <PipBoyLayout>

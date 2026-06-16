@@ -167,7 +167,7 @@ export default function BootPage() {
         )}
 
         <div className={styles.versionInfo}>
-          v1.0 &nbsp;·&nbsp; NIVELES A1–B2 &nbsp;·&nbsp; 100 DESAFÍOS &nbsp;·&nbsp; SILABOS
+          A1–B2 &nbsp;·&nbsp; 100 DESAFÍOS &nbsp;·&nbsp; SILABOS
         </div>
       </div>
     </div>

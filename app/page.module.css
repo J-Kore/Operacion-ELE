@@ -63,17 +63,16 @@
 
 .subtitle {
   font-family: var(--font-vt);
-  /* Subimos el mínimo de 0.85 a 1.0rem, el ritmo de escala de 3.2 a 3.5vw, y el tope de 1.6 a 1.8rem */
-  font-size: clamp(1.0rem, 3.5vw, 1.8rem);
-  letter-spacing: 0.4em;
+  font-size: clamp(0.75rem, 3.5vw, 1.8rem);  /* baja el mínimo en móvil */
+  letter-spacing: clamp(0.1em, 0.4em, 0.4em);
   color: var(--pip-dim);
   margin-bottom: 4px;
-  white-space: nowrap;   /* evita que se parta en dos líneas */
+  white-space: nowrap;
 }
 
 .tagline {
-  font-size: 0.85rem;
-  letter-spacing: 0.4em;
+  font-size: clamp(0.6rem, 2vw, 0.85rem);
+  letter-spacing: clamp(0.15em, 0.4em, 0.4em);
   color: rgba(0, 255, 157, 0.75);
   text-transform: uppercase;
   margin-bottom: 40px;
@@ -166,8 +165,8 @@
 
 /* VERSION */
 .versionInfo {
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
+  font-size: clamp(0.6rem, 1.5vw, 0.60rem);
+  letter-spacing: clamp(0.1em, 0.2em, 0.2em);
   color: rgba(0, 255, 157, 0.75);
 }
 

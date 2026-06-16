@@ -134,7 +134,7 @@ export default function BootPage() {
         </div>
 
         <div className={styles.title}>OP·ELE</div>
-        <div className={styles.subtitle}>O P E R A C I Ó N &nbsp; E · L · E</div>
+        <div className={styles.subtitle}>S I L A B O S  .&nbsp;C O M </div>
         <div className={styles.tagline}>AVENTURA · ESPAÑOL · SUPERVIVENCIA</div>
 
         <div className={styles.bars}>

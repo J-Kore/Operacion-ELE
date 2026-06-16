@@ -63,7 +63,8 @@
 
 .subtitle {
   font-family: var(--font-vt);
-  font-size: clamp(0.85rem, 3.2vw, 1.6rem);
+  /* Subimos el mínimo de 0.85 a 1.0rem, el ritmo de escala de 3.2 a 3.5vw, y el tope de 1.6 a 1.8rem */
+  font-size: clamp(1.0rem, 3.5vw, 1.8rem);
   letter-spacing: 0.4em;
   color: var(--pip-dim);
   margin-bottom: 4px;
@@ -71,7 +72,7 @@
 }
 
 .tagline {
-  font-size: 0.55rem;
+  font-size: 0.85rem;
   letter-spacing: 0.4em;
   color: rgba(0, 255, 157, 0.75);
   text-transform: uppercase;
@@ -165,7 +166,7 @@
 
 /* VERSION */
 .versionInfo {
-  font-size: 0.5rem;
+  font-size: 0.65rem;
   letter-spacing: 0.2em;
   color: rgba(0, 255, 157, 0.75);
 }

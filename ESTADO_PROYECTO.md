@@ -370,3 +370,34 @@ las tareas como las respuestas del NPC. Esto resolverá parte del problema
 de forma estructural. Pero las decisiones pedagógicas sobre qué constituye
 una tarea comunicativa válida siguen siendo decisiones humanas que hay que
 tomar antes de la integración.
+
+---
+
+## 12. CAMBIOS SESIÓN 16 JUNIO 2026
+
+### Boot screen — insignia Sílabos y legibilidad
+
+**Archivos modificados:** `app/page.tsx`, `app/page.module.css`
+
+- Icono 🤖 eliminado. Sustituido por el SVG de la insignia de Sílabos
+  (constelación de Orión estilo Tron) inline en el JSX, con efecto
+  `pulse-glow` y `drop-shadow` neón.
+- Subtitle "OPERACIÓN E·L·E" ya no se parte en dos líneas:
+  `white-space: nowrap` + `clamp` mínimo bajado de `1rem` a `0.85rem`.
+- Opacidad de `.tagline` subida de `0.4` a `0.75` (ESPIONAJE · ESPAÑOL ·
+  SUPERVIVENCIA era ilegible).
+- Opacidad de `.versionInfo` subida de `0.25` a `0.75` (OPERACIÓN E.L.E.
+  v1.0 · NIVELES A1-B2 · 25 MISIONES · 100 DESAFÍOS era ilegible).
+
+### Fix crítico de deploy — Vercel
+
+Commit `6c56a3d` fallaba en build con:
+`Module not found: Can't resolve './page.module.css'`
+en `app/mision/[nivel]/page.tsx`.
+
+Causa: ese archivo era una copia incorrecta del page.tsx de
+`[nivel]/[habilidad]/` que se coló en la carpeta `[nivel]/` durante
+una sesión anterior. Importaba `./page.module.css` que no existe ahí.
+
+Solución: restaurar `app/mision/[nivel]/page.tsx` a su función correcta
+— un redirect simple a `/mision/${nivelId}/oral`.

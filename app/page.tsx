@@ -133,9 +133,9 @@ export default function BootPage() {
           </svg>
         </div>
 
-        <div className={styles.title}>PIP·BOY</div>
+        <div className={styles.title}>OP·ELE</div>
         <div className={styles.subtitle}>O P E R A C I Ó N &nbsp; E · L · E</div>
-        <div className={styles.tagline}>ESPIONAJE · ESPAÑOL · SUPERVIVENCIA</div>
+        <div className={styles.tagline}>AVENTURA · ESPAÑOL · SUPERVIVENCIA</div>
 
         <div className={styles.bars}>
           {[
@@ -167,7 +167,7 @@ export default function BootPage() {
         )}
 
         <div className={styles.versionInfo}>
-          OPERACIÓN E.L.E. v1.0 &nbsp;·&nbsp; NIVELES A1–B2 &nbsp;·&nbsp; 25 MISIONES · 100 DESAFÍOS
+          v1.0 &nbsp;·&nbsp; NIVELES A1–B2 &nbsp;·&nbsp; 100 DESAFÍOS &nbsp;·&nbsp; SILABOS
         </div>
       </div>
     </div>

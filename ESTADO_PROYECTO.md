@@ -719,3 +719,55 @@ sin cambios estructurales cuando se quiera.
 3. Limpiar archivos `.backup` que el usuario pudo haber creado al
    sobreescribir `layout.tsx` y `ChatChallenge.tsx` (recordatorio dado
    durante la sesión, verificar que no se suban a git).
+
+---
+
+## 17. INCIDENTE DE DEPLOY — Prisma generate no se ejecutaba en Vercel (18 jun 2026)
+
+### Síntoma
+
+Tras añadir Prisma, el build en Vercel fallaba con:
+```
+Type error: Module '"@prisma/client"' has no exported member 'PrismaClient'.
+```
+aunque en local todo funcionaba bien y el `package.json` tenía correctamente
+`"build": "prisma generate && next build"`.
+
+### Causa raíz
+
+El log de Vercel mostraba `> next build` sin el `prisma generate` delante,
+a pesar de que el script en GitHub era correcto. La configuración de
+**Project Settings → Build Command** en el dashboard de Vercel estaba en
+modo automático (detección de framework), lo cual en este caso ignoraba
+el script `build` real de `package.json` y ejecutaba directamente
+`next build`.
+
+### Solución
+
+1. Vercel → proyecto → Settings → Build and Deployment → Framework
+   Settings → activar el toggle "Override" en **Build Command** y
+   escribir explícitamente `npm run build`.
+2. Esto NO aplica retroactivamente a deployments ya construidos — hace
+   falta disparar un deployment NUEVO después de guardar el override.
+3. El primer intento de redeploy automático (vía push) no se disparó
+   solo (webhook puntualmente no reaccionó). Se resolvió con
+   **Deployments → Create Deployment** → pegar la URL del commit
+   (`https://github.com/.../tree/main`) → "Deploy to Production",
+   forzando manualmente la construcción del commit correcto con la
+   configuración ya corregida.
+
+### Lección para el futuro
+
+Si un cambio en `package.json` (scripts de build) no se refleja en el
+comportamiento de Vercel aunque esté bien en GitHub: revisar primero
+Settings → Build and Deployment → Framework Settings, por si el "Build
+Command" tiene su propio valor con override activado (o necesita
+activarse) que sobrescribe lo que dice `package.json`.
+
+### Confirmado en producción
+
+Build verde completo. Log muestra `✔ Generated Prisma Client (v7.8.0)`
+ejecutándose correctamente antes de `next build`. Todas las rutas nuevas
+de identidad compiladas: `/login`, `/registro`, `/api/auth/[...nextauth]`,
+`/api/registro`. La integración de identidad del estudiante (sección 16)
+queda confirmada funcionando también en producción, no solo en local.

@@ -1,5 +1,6 @@
 'use client'
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useSession } from 'next-auth/react'
 import { Subnivel, HabilidadType, MensajeChat, ContenidoAuditivo, PreguntaAuditiva } from '@/lib/types'
 import { usePipBoySound } from '@/hooks/usePipBoySound'
 import AudioLogPlayer from './AudioLogPlayer'
@@ -156,6 +157,8 @@ function InventarioAcordeon({ subnivel }: { subnivel: Subnivel }) {
 
 export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMision }: Props) {
   const { play } = usePipBoySound()
+  const { data: session } = useSession()
+  const userId = session?.user?.id
 
   // ── Estado del chat ──
   const [mensajes, setMensajes]               = useState<MensajeChat[]>([])
@@ -239,7 +242,7 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
         const res = await fetch('/api/generar-contenido', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subnivel, habilidad }),
+          body: JSON.stringify({ subnivel, habilidad, userId }),
         })
         const data = await res.json()
 
@@ -390,6 +393,7 @@ export default function ChatChallenge({ subnivel, habilidad, onExito, primeraMis
           historial: mensajes,
           mensaje: userMsg,
           intento,
+          userId,
           // Para auditiva: el evaluador necesita las preguntas y sus respuestas
           // esperadas para verificar que la información es correcta, no solo
           // que la gramática está bien.

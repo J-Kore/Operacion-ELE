@@ -401,3 +401,321 @@ una sesión anterior. Importaba `./page.module.css` que no existe ahí.
 
 Solución: restaurar `app/mision/[nivel]/page.tsx` a su función correcta
 — un redirect simple a `/mision/${nivelId}/oral`.
+
+---
+
+## 13. NARRATIVA — "EL MENTOR" (diseño completo, ver NARRATIVA_OPERACION_ELE.md)
+
+Trama serializada en 4 temporadas (una por macronivel A1/A2/B1/B2), con
+giro de cierre al final de cada una — no solo un giro final en B2.8, para
+que estudiantes que abandonan en niveles bajos tengan una historia con
+principio y fin igualmente.
+
+Premisa: el Coronel/a Marín, mentor del estudiante, resulta ser el
+infiltrado de "la Cofradía" dentro de la Agencia. La Agente Solís es la
+confidente que ayuda a destaparlo. La sospecha solo se verbaliza en la
+trama a partir de B1.5 (subjuntivo de duda) — nunca antes de que el
+estudiante tenga la gramática para expresarla.
+
+Dentro de cada subnivel, las 4 destrezas (EO/EE/CL/CA) dejan de ser
+ejercicios aislados sobre la misma gramática: son 4 momentos secuenciales
+de una misma micro-escena (EO = interacción en vivo, EE = lo que se
+redacta después, CL = documento que se encuentra, CA = cierre que conecta
+con el siguiente subnivel).
+
+B2.7-B2.8 tienen final ramificado: el estudiante elige exponer/confrontar/
+tender una trampa a Marín; la elección es un dato estructurado aparte,
+independiente de la evaluación lingüística (no se mezcla con la
+corrección gramatical).
+
+Pendiente de implementación en código: reescribir `descripcionNarrativa`
+de los 25 subniveles, añadir `personajesActivos`, y que los prompts de
+`lib/ai.ts` reciban el contexto narrativo además del curricular.
+
+**Decisión de arquitectura:** la narrativa vive en `operación-ele`
+(niveles.json o archivo propio), NO en ELE-API. ELE-API solo conoce
+currículo PCIC y resultados numéricos — nunca personajes ni trama.
+
+**Pendiente de decisión del usuario:** el género del estudiante
+(pregunta explícita "El agente / La agente" en el alta) para los pocos
+puntos donde el español lo exige gramaticalmente (adjetivos/participios
+en 1ª persona o cuando un NPC describe al estudiante). Diseño aceptado,
+implementación pendiente.
+
+---
+
+## 14. INTEGRACIÓN ELE-API — IMPLEMENTADA (sesión 17 jun 2026)
+
+### Estado de la API del usuario
+
+Desplegada y operativa en Railway: `silabos-ele-api-production.up.railway.app`.
+Fastify + TypeScript + PostgreSQL. Currículo PCIC completo (25 subniveles +
+inventarios + actividades seed). Auth JWT funcionando.
+
+Contrato completo en `ELE-API_Contrato.md` (compartido por el usuario).
+Cliente tipado ya provisto por el usuario: `lib/ele-api-client.ts`
+(login, refresh automático, todos los endpoints).
+
+### Decisión de arquitectura de integración
+
+**Reparto por destreza:**
+- **CL (lectora) y CA (auditiva):** ELE-API primero (`GET /v1/activities`
+  filtrado por levelId+skill). Si no hay actividad cargada para el
+  subnivel → **fallback transparente a Claude** (no bloqueante).
+- **EO (oral) y EE (escrita):** siempre Claude (necesitan evaluación de
+  texto libre, no encajan en opción múltiple de ELE-API).
+
+**Progreso:** vive en ELE-API (tabla `user_level`), no en localStorage.
+localStorage pasa a ser caché de lectura, nunca fuente de verdad.
+
+**Traducción Claude → ELE-API:** el resultado de Claude (exito/capa) se
+mapea a un score [0-1] (capa 1 éxito=0.9, capa 2=0.7, capa 3=0.5,
+fallo=0.2) y se registra en ELE-API contra una actividad "contenedor"
+EO/EE del subnivel, para que el progreso se vea unificado independiente
+de qué motor evaluó.
+
+### Archivos creados
+
+- **`lib/ele-api-client.ts`** — cliente tipado (provisto por el usuario,
+  copiado sin cambios). Login, refresh automático ante 401, todos los
+  endpoints del contrato.
+- **`lib/eleApiOrchestrator.ts`** — NUEVO. Capa de orquestación entre
+  ELE-API y Claude. Decide por destreza qué fuente usar, con fallback
+  transparente. Traduce resultados de Claude a score ELE-API. Cliente
+  singleton con login cacheado por proceso de servidor. Caché de
+  `passThreshold` por subnivel (evita pedir el currículo en cada submit).
+- **`app/api/generar-contenido/route.ts`** — MODIFICADO. Usa
+  `obtenerContenidoDesafio()` del orquestador en vez de llamar a
+  `lib/ai.ts` directamente. Contrato de respuesta hacia el frontend
+  SIN CAMBIOS (compatibilidad total con ChatChallenge.tsx actual).
+- **`app/api/chat/route.ts`** — MODIFICADO. Usa
+  `evaluarYRegistrarProgreso()`. Acepta `userId`/`activityId`/`answers`
+  como campos OPCIONALES — si no llegan (frontend actual no los envía
+  todavía), se comporta exactamente igual que antes de esta sesión.
+- **`.env.local.example`** — añadidas `ELE_API_URL`, `ELE_API_EMAIL`,
+  `ELE_API_PASSWORD` (usuario de prueba, pendiente rotar antes de
+  producción).
+
+Type-check (`tsc --noEmit`) completo del proyecto: PASA.
+
+### IMPORTANTE — lo que falta para que la integración funcione de verdad
+
+1. **`ChatChallenge.tsx` todavía no envía `userId`.** El sistema funciona
+   hoy en modo retrocompatible (Claude puro, como antes), pero el
+   progreso NO se está sincronizando con ELE-API todavía porque no hay
+   userId real. Esto requiere decidir cómo se identifica al estudiante
+   en operación-ele (¿login propio? ¿el mismo JWT de ELE-API por
+   estudiante, no solo el de servicio?) — DECISIÓN PENDIENTE, no resuelta
+   hoy. Es la pieza que falta para cerrar el círculo.
+2. **Actividades CL/CA por completar en ELE-API.** El fallback a Claude
+   cubre los huecos, pero para que la integración aporte valor real hay
+   que ir cargando actividades de opción múltiple en ELE-API subnivel
+   a subnivel (trabajo del usuario, en paralelo, no bloqueante).
+3. **Actividad "contenedor" EO/EE en ELE-API.** Para que
+   `registrarEnEleApiSinBloquear` no falle siempre con 404, hace falta
+   crear en ELE-API al menos una actividad de tipo EO y otra EE por
+   subnivel (aunque sea un placeholder), solo para tener dónde registrar
+   el score que traduce el resultado de Claude.
+4. **Usuario de servicio dedicado** (no `profesor@ele.test`) antes de
+   producción — ya anotado en el informe del usuario.
+
+### Próximo paso recomendado
+
+Decidir el sistema de identidad del estudiante en operación-ele (punto 1
+de arriba) es el bloqueante real para que el progreso empiece a
+sincronizarse. Sin eso, la integración está "câblée" pero no se activa.
+
+---
+
+## 15. SEGURIDAD — ACTUALIZACIÓN DE NEXT.JS (sesión 17 jun 2026)
+
+### Hecho hoy
+
+`next` actualizado de `14.2.5` → `14.2.35` en package.json/package-lock.json.
+Resuelve la vulnerabilidad crítica de RCE en App Router divulgada en
+diciembre 2025 (CVE-2025-55182 y relacionadas) — la versión 14.2.5 que
+tenía el proyecto estaba expuesta. `npm audit fix` aplicado también para
+una vulnerabilidad de severidad alta en `form-data` (dependencia
+indirecta), resuelta sin cambios de versión mayor.
+
+### Pendiente — NO hacer hoy, requiere sesión dedicada
+
+`npm audit` sigue reportando 2 vulnerabilidades (1 alta, 1 moderada) en
+`next` y `postcss`, cuyo único fix disponible es saltar a `next@16.2.9`
+(cambio de versión MAYOR, 14→16). Next.js dejó de dar parches de
+seguridad completos a la rama 14.x más allá de la 14.2.35.
+
+Riesgo real evaluado: las vulnerabilidades restantes (DoS en Image
+Optimizer, XSS con CSP nonces, cache poisoning, request smuggling,
+bypass de middleware en i18n) requieren condiciones que el proyecto
+hoy no cumple en su mayoría — no se usa `next/image` con remotePatterns
+externos, no se usa i18n del Pages Router (el proyecto es 100% App
+Router). Riesgo bajo-medio en el corto plazo, pero no nulo.
+
+**Plan recomendado:** dedicar una sesión específica a evaluar el salto
+a Next 16 — probar build completo, revisar breaking changes de la
+guía oficial de migración, verificar que las rutas dinámicas
+(`[nivel]/[habilidad]`) y los route handlers de `app/api/` sigan
+funcionando igual. NO mezclar con cambios funcionales (narrativa,
+integración ELE-API) para poder aislar cualquier regresión.
+
+**No ejecutar `npm audit fix --force` sin probar antes en una copia** —
+instalaría next@16.2.9 directamente y es muy probable que rompa algo.
+
+---
+
+## 16. IDENTIDAD DEL ESTUDIANTE — IMPLEMENTADA (sesión 18 jun 2026)
+
+### Decisión de arquitectura
+
+Tres piezas separadas a propósito, sin acoplarse entre sí:
+
+| Pieza | Vive en | Qué guarda |
+|---|---|---|
+| Identidad del estudiante (email/password) | Base de datos nueva (Prisma Postgres vía Vercel) | Cuenta, contraseña hasheada, sesión |
+| Currículo PCIC + progreso lingüístico | ELE-API (Railway) | Subniveles, scores CE/CO/EE/EO |
+| Narrativa y trama | `niveles.json` en operación-ele | Personajes, escenas, giros |
+
+**Por qué esta separación:** la ELE-API del usuario va a servir a otros
+proyectos en el futuro, no solo a operación-ele. Por eso NUNCA debe
+conocer el email/contraseña de un estudiante — solo conoce un `userId`
+(UUID) sin saber cómo esa persona inició sesión. Así, otro proyecto
+futuro puede usar la ELE-API con su propio sistema de identidad sin
+fricción ni acoplamiento.
+
+**Modelo de negocio:** hoy 100% gratuito para fase de testeo. El modelo
+de pago (suscripción/freemium) queda pendiente de decidir más adelante;
+esta arquitectura no lo bloquea — añadir Stripe/planes más adelante no
+requiere rehacer la identidad, solo añadir un campo de "plan" al modelo
+User de Prisma.
+
+### Stack elegido y por qué
+
+- **Auth.js v5** (antes NextAuth.js) — estándar de la industria para
+  Next.js, gratuito, soporta credentials (email/password) y OAuth social
+  (Google, pendiente de añadir más adelante) con la misma configuración.
+- **Prisma 7** como ORM — ⚠️ versión MUY reciente (lanzada 19 nov 2025),
+  con cambios grandes de configuración respecto a v6 (ver más abajo).
+  Se decidió migrar a la última versión en vez de bajar a v6, a pesar
+  del esfuerzo extra de adaptación.
+- **Prisma Postgres** (integración de marketplace en Vercel → Storage)
+  como base de datos. Variables de entorno reales generadas con prefijo
+  `POSTGRES_` (nombres específicos de esta integración, distintos de
+  los que usaba el antiguo "Vercel Postgres" nativo):
+  - `POSTGRES_URL` — conexión directa, usada por el CLI (migraciones)
+  - `POSTGRES_PRISMA_DATABASE_URL` — conexión con pooling, usada por el
+    cliente en runtime
+
+### Particularidades de Prisma 7 (documentar para el futuro)
+
+Cambio grande respecto a v6: la URL de conexión YA NO se pone en
+`schema.prisma` (`url`/`directUrl` ahí ya no son válidos). Ahora vive en
+un archivo nuevo `prisma.config.ts` en la raíz del proyecto. Además,
+`PrismaClient` ya no se puede instanciar sin más (`new PrismaClient()`
+falla) — requiere pasarle explícitamente un "driver adapter"
+(`@prisma/adapter-pg` para Postgres).
+
+`dotenv/config` (usado por `prisma.config.ts`) busca por defecto un
+archivo `.env`, NO `.env.local` (que es la convención de Next.js). Hubo
+que cargar dotenv explícitamente apuntando a `.env.local`.
+
+### Archivos creados
+
+- **`prisma/schema.prisma`** — modelos `User` (con campo extra `genero`
+  y `passwordHash`), `Account`, `Session`, `VerificationToken` (estos 3
+  últimos requeridos por el adaptador de Auth.js). Sin `url`/`directUrl`
+  (sintaxis Prisma 7).
+- **`prisma.config.ts`** (raíz) — configuración del CLI, carga
+  `.env.local` explícitamente, usa `POSTGRES_URL`.
+- **`auth.config.ts`** (raíz) — configuración edge-safe: provider
+  Credentials (forma del formulario), callback `authorized` que protege
+  `/mision`, `/mapa`, `/agente`, `/inventario`, `/radio`, `/diagnostico`.
+  Incluye aviso documentado sobre CVE-2025-29927 (bypass de middleware):
+  esta capa es solo primera barrera de UX, no la única protección.
+- **`auth.ts`** (raíz) — configuración completa con adaptador Prisma y
+  el `authorize()` real (bcrypt.compare contra `passwordHash`). Exporta
+  `handlers`, `auth`, `signIn`, `signOut`.
+- **`proxy.ts`** (raíz) — middleware que aplica `authorized()` de
+  auth.config.ts a las rutas de página.
+- **`lib/prisma.ts`** — cliente singleton con adaptador `PrismaPg`
+  (patrón obligatorio Prisma 7).
+- **`app/api/auth/[...nextauth]/route.ts`** — `export const { GET, POST }
+  = handlers` (desestructurado del objeto `handlers`, NO reexportado
+  directamente — error cometido y corregido en esta sesión).
+- **`app/api/registro/route.ts`** — crea el usuario con
+  `bcrypt.hash(password, 12)`. Mensaje de error genérico si el email ya
+  existe en uso (sin revelar más para evitar enumeración de cuentas).
+- **`app/registro/page.tsx`** + CSS — formulario con email, contraseña,
+  y selector "El agente / La agente" (campo `genero`). Auto-login tras
+  registro exitoso.
+- **`app/login/page.tsx`** — formulario simple de login.
+- **`components/Providers.tsx`** — wrapper cliente con `SessionProvider`
+  de next-auth/react, necesario porque `app/layout.tsx` es Server
+  Component y no puede usar el contexto de sesión directamente.
+- **`app/layout.tsx`** — MODIFICADO: envuelve `children` en
+  `<Providers>`. De paso, corregido el aviso de consola "apple-mobile-
+  web-app-capable is deprecated" añadiendo también el meta
+  `mobile-web-app-capable`.
+- **`components/Challenges/ChatChallenge.tsx`** — MODIFICADO: usa
+  `useSession()` para obtener `userId` real y lo envía en las dos
+  llamadas fetch (`/api/generar-contenido` y `/api/chat`), conectando
+  por fin con el orquestador ELE-API construido en la sesión anterior.
+
+### Verificado funcionando en local (confirmado por el usuario)
+
+- `npx prisma generate` y `npx prisma db push` — tablas creadas en la
+  base de datos real.
+- Registro de usuario de prueba → contraseña hasheada guardada
+  correctamente (confirmado: `POST /api/registro 200`).
+- Auto-login tras registro y login manual — ambos funcionando tras
+  corregir el bug del route handler.
+
+### Bugs encontrados y corregidos en esta sesión
+
+1. Nombres de variables de entorno asumidos incorrectamente al inicio
+   (`POSTGRES_PRISMA_URL`/`POSTGRES_URL_NON_POOLING`) — corregido a los
+   reales de la integración Prisma Postgres de Vercel.
+2. Sintaxis de Prisma 6 usada por error inicialmente (`url`/`directUrl`
+   en schema.prisma) — proyecto instalado era Prisma 7, sintaxis
+   incompatible. Migrado a `prisma.config.ts` + driver adapter.
+3. `dotenv/config` no encontraba `.env.local` (buscaba `.env`) —
+   corregido cargando dotenv explícitamente con esa ruta.
+4. Import relativo incorrecto en `auth.ts` (`'../auth.config'` en vez de
+   `'./auth.config'` — ambos archivos están en la raíz, mismo nivel).
+5. Route handler de NextAuth mal escrito (`export { GET, POST } from
+   '@/auth'` cuando `auth.ts` no exporta GET/POST directamente, sino un
+   objeto `handlers` que los contiene) — corregido a `export const {
+   GET, POST } = handlers`.
+
+### IMPORTANTE — pendiente para la próxima sesión
+
+**Conflicto entre dos sistemas de progreso sin resolver.** El
+`localStorage` antiguo (`operacion-ele-progreso`, gestionado por
+`gameState.ts`, de antes de esta sesión) sigue activo y desconectado de
+la cuenta real nueva. `PipBoyLayout` redirige directo a `/mapa` si
+detecta ese localStorage, aunque el usuario logueado no tenga ninguna
+relación con ese progreso. Decisión pendiente (es de producto, no solo
+técnica): ¿migrar el progreso de localStorage a la cuenta la primera vez
+que alguien se loguea, o empezar de cero y dejar el localStorage viejo
+como reliquia sin usar?
+
+**Sigue sin probarse el círculo completo con la ELE-API.** Aunque
+`ChatChallenge.tsx` ya envía `userId` real, no se ha verificado todavía
+en esta sesión que ese `userId` llegue correctamente al orquestador de
+ayer y que el progreso se registre de verdad en la base de datos de la
+ELE-API (Railway). Es el siguiente paso lógico de verificación.
+
+**No se ha añadido login social (Google) todavía** — decisión aplazada
+a propósito, la base con Credentials ya está lista para añadirlo encima
+sin cambios estructurales cuando se quiera.
+
+### Próximo paso recomendado
+
+1. Verificar el círculo completo: registrar usuario → completar un
+   desafío → confirmar en la base de datos de la ELE-API (o vía
+   `getProgress(userId)`) que el score se registró.
+2. Decidir y resolver el conflicto de los dos sistemas de progreso
+   (localStorage viejo vs. cuenta nueva).
+3. Limpiar archivos `.backup` que el usuario pudo haber creado al
+   sobreescribir `layout.tsx` y `ChatChallenge.tsx` (recordatorio dado
+   durante la sesión, verificar que no se suban a git).

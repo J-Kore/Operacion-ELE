@@ -1,0 +1,82 @@
+// prisma/schema.prisma
+//
+// Base de datos de IDENTIDAD de operación-ele — SEPARADA de la ELE-API.
+// Solo guarda quién es la persona (email, contraseña hasheada, sesión).
+// NUNCA guarda progreso lingüístico, scores ni currículo — eso vive en
+// la ELE-API (Railway), identificado solo por el `id` (userId) de aquí.
+//
+// PRISMA 7: la URL de conexión ya NO se pone aquí. Vive en
+// prisma.config.ts (raíz del proyecto). Ver ese archivo.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Modelos requeridos por @auth/prisma-adapter (Auth.js v5) ──
+// Nombres y campos siguen el esquema oficial del adaptador; no renombrar
+// sin actualizar también la config de Auth.js.
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // Hash de la contraseña (bcrypt). Null si el usuario solo usa login
+  // social (Google, cuando se añada) y nunca puso contraseña.
+  passwordHash  String?
+
+  // ── Datos propios de operación-ele, mínimos para hoy ──
+  // El género se usa solo en los puntos donde el español lo exige
+  // gramaticalmente (adjetivos/participios sobre el propio estudiante).
+  genero        String?   // 'M' | 'F' — ver NARRATIVA_OPERACION_ELE.md
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+}
+
+// Cuentas de proveedores OAuth (Google, etc.) — vacío hasta que se añada
+// login social, pero el adaptador de Auth.js necesita la tabla igualmente.
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

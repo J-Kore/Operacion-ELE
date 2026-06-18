@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import Providers from '@/components/Providers'
 
 export const metadata: Metadata = {
   title: 'Operación E.L.E. — Pip-Boy Spy Academy',
@@ -30,10 +31,15 @@ export default function RootLayout({
         <meta name="theme-color" content="#0a0f0b" />
         {/* Pantalla completa en iOS */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        {/* Estándar actual (sustituye/complementa el meta de Apple, que
+            por sí solo genera el aviso de deprecación en consola) */}
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Op. E.L.E." />
       </head>
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }
